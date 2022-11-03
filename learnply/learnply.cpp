@@ -14,7 +14,7 @@
 #include "polyhedron.h"
 #include "trackball.h"
 #include "tmatrix.h"
-#include "project2.h"
+#include "project3.h"
 #include "polyline2.h"
 #include "drawUtil.h"
 #include "iostream"

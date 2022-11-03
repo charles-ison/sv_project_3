@@ -139,7 +139,7 @@
     </ClCompile>
     <ClCompile Include="polyhedron.cpp" />
     <ClCompile Include="polyline2.cpp" />
-    <ClCompile Include="project2.cpp" />
+    <ClCompile Include="project3.cpp" />
     <ClCompile Include="tmatrix.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
       <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">EnableFastChecks</BasicRuntimeChecks>
@@ -164,6 +164,7 @@
     <ClInclude Include="project2.h" />
     <ClInclude Include="tmatrix.h" />
     <ClInclude Include="trackball.h" />
+	  <ClInclude Include="project3.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

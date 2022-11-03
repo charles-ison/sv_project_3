@@ -1,4 +1,4 @@
-#include "project2.h"
+#include "project3.h"
 #include "polyhedron.h"
 #include "iostream"
 #include "GL/freeglut.h"
