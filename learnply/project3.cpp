@@ -286,10 +286,10 @@ std::list<CriticalPoint> getCriticalPoints() {
 void addCriticalPointContours(double threshold, icVector3 color) {
 	std::list<Polyline2> edges = marchingSquare(*poly, threshold);
 	std::vector<Polyline2> newPolylines = makePolylineFromEdges(edges);
-	for (auto polyline : newPolylines) {
-		polyline.rgb = color;
-		polylines.push_back(polyline);
-	}
+for (auto polyline : newPolylines) {
+	polyline.rgb = color;
+	polylines.push_back(polyline);
+}
 }
 
 void part3B(std::list<CriticalPoint> criticalPoints) {
@@ -298,4 +298,137 @@ void part3B(std::list<CriticalPoint> criticalPoints) {
 			addCriticalPointContours(criticalPoint.scalar, criticalPoint.color);
 		}
 	}
+}
+
+// Actual Project 3 Stuff
+void streamline(Polyline2 polyline, icVector3 seed, const double step) {
+	streamlineFB(polyline, seed, step);
+	Polyline2 lineBack;
+	streamlineFB(lineBack, seed, step, false);
+	polyline.merge(lineBack);
+}
+
+void streamlineFB(Polyline2 polyline, icVector3 seed, const double step, bool forward) {
+	polyline.vertices.push_back(seed);
+	Quad quad = findQuad(seed);
+	icVector3 min, max;
+	findMinMaxField(min, max);
+	icVector3 currentPosition = seed;
+	double coef = 1.0;
+	if (!forward) {
+		coef = -1.0;
+	}
+	while (quad != nullptr) {
+		icVector3 currentVector = getVector(quad, currentPosition);
+		if (currentVector.length() < EPSILON) {
+			break;
+		}
+		icVector3 nextPosition = currPos + step * currVec * coef;
+		if (sinp2Boundary(nextPos, min, max)) {
+			polyline.vertices.push_back(nextPosition);
+			break;
+		}
+		Quad nextQuad = nullptr;
+		streamlineTrace(nextQuad, quad, currentPosition, currentVector * coef, step, min, max);
+		quad = nextQuad;
+		currentPosition = nextPosition;
+		polyline.vertices.push_back(currentPosition);
+	}
+}
+
+// not done
+void findMinMaxField(icVector3& min, icVector3& max) {
+	min.x = poly->vlist[0]->x;
+	min.y = poly->vlist[0]->y;
+	min.z = poly->vlist[0]->z;
+
+	max = min;
+
+	for (int i = 0; i < poly->nverts; i++) {
+		if (min.x > poly->vlist[i]->x) {
+			min.x = poly->vlist[i]->x;
+		}
+		if (min.y > poly->vlist[i]->y) {
+			min.y = poly->vlist[i]->y;
+		}
+		if (min.z > poly->vlist[i]->z) {
+			min.z = poly->vlist[i]->z;
+		}
+	}
+}
+
+bool insideQuad(const Quad quad, const icVector3 p) {
+	double v0x = quad.verts[2]->x;
+	double v0y = quad.verts[2]->y;
+	double v2x = quad.verts[0]->x;
+	double v2y = quad.verts[0]->y;
+	if (p.x >= v0x && p.x <= v2x && p.y >= v0y && p.y <= v2y) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+Quad findQuad(const icVector3 p) {
+	for (int i = 0; i < poly->nquads; i++) {
+		Quad tempQuad = poly->qlist[i];
+		if (insideQuad(tempQuad, p)) {
+			return tempQuad;
+		}
+	}
+	return nullptr;
+}
+
+viod streamlineTrace(Quad nextQuad, icVector3 nextPos, icVector3 nextVec, Quad currentQuad, icVector3 currentPos,
+	icVector3 currentVec, double t, const icVector3 min, const icVector3 max) {
+
+	bool insideQuad = false;
+	while (!insideQuad) {
+		if (currentPos.x < min.x || currentPos.x > max.x) ||
+			currentPos.y < min.y || currentPos.y > max.y) {
+			nextQuad = nullptr; 
+			return;
+		}
+
+		double t_ = INFINITY;
+		Quad nextQuad = nullptr;
+		for (int i = 0; i < 4; i++) {
+			Edge edge = currentQuad.edges[i];
+			Vertex v0 = edge.verts[0];
+			Vertex v1 = edge.verts[1];
+			double temp;
+			if (std::abs(v0.x - v1.x) < EPSILON) {
+				temp = (v0.x - currentPos.x) / currentVec.x;
+			}
+			else {
+				temp = (v0.y - currentPos.y) / currentVec.y;
+			}
+			if (temp > 0 && temp < t) {
+				t_ = temp;
+				if (edge.quads[0] != currentQuad && edge.quads[1] == currentQuad) {
+					nextQuad = edge.quads[0];
+				}
+				else if (edge.quads[0] == currQuad && edge.quads[1] != currentQuad) {
+					nextQuad = edge.quads[1];
+				}
+			}
+		}
+		if (nextQuad == nullptr) {
+			currentPos = currentPos + currentVec * t;
+			nextQuad = findQuad(currentPos);
+			return;
+		}
+		else {
+			if (t_ >= t) {
+				insideQuad = true;
+			} 
+			else {
+				currentQuad = nextQuad;
+				t = t - t_;
+				currentPos = currentPos + currentVec * t_;
+			}
+		}
+	}
+	nextQuad = currentQuad;
 }

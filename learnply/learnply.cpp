@@ -466,7 +466,16 @@ void keyboard(unsigned char key, int x, int y) {
 		break;
 
 	case 'a': 
-		display_mode = 6;
+		display_mode = 1;
+		{
+			Polyline2 polyline;
+			for (int i = -10; i < 10; i++) {
+				polyline.vertices.clear();
+				streamline(polyline, icVector3(i * 1.0, 0, 0), 0.001);
+				polyline.rgb = icVector3(0.0, 1.0, 0.0);
+				polylines.push_back(polyline);
+			}
+		}
 		glutPostRedisplay();
 		break;
 
