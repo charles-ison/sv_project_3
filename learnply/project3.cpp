@@ -10,6 +10,7 @@
 #define EPSILON 0.01
 extern Polyhedron* poly;
 extern std::vector<Polyline2> polylines;
+extern std::list<Singularity> singularities;
 
 int numberOfContours = 100;
 
@@ -380,7 +381,7 @@ Quad findQuad(const icVector3 p) {
 	return nullptr;
 }
 
-viod streamlineTrace(Quad nextQuad, icVector3 nextPos, icVector3 nextVec, Quad currentQuad, icVector3 currentPos,
+void streamlineTrace(Quad nextQuad, icVector3 nextPos, icVector3 nextVec, Quad currentQuad, icVector3 currentPos,
 	icVector3 currentVec, double t, const icVector3 min, const icVector3 max) {
 
 	bool insideQuad = false;
@@ -431,4 +432,54 @@ viod streamlineTrace(Quad nextQuad, icVector3 nextPos, icVector3 nextVec, Quad c
 		}
 	}
 	nextQuad = currentQuad;
+}
+
+bool singRoot(double r0, double r1, double a, double b, double c, double d) {
+	double f0 = b - a - (c + d);
+	double f1 = (c + d);
+	double f2 = a;
+	return quadraticRoot(r0, r1, f0, f1, f2);
+}
+
+// not done
+void extractSingularity() {
+	singularities.clear();
+	for (int i = 0; i < poly->nquads; i++) {
+		icVector3 vecx1y1 = poly->qlist[i]->verts[2]->vec();
+		icVector3 posx1y1 = poly->qlist[i]->verts[2]->pos();
+		icVector3 vecx2y1 = poly->qlist[i]->verts[3]->vec();
+		icVector3 posx2y1 = poly->qlist[i]->verts[3]->pos();
+		icVector3 vecx2y2 = poly->qlist[i]->verts[0]->vec();
+		icVector3 posx2y2 = poly->qlist[i]->verts[0]->pos();
+		icVector3 vecx1y2 = poly->qlist[i]->verts[1]->vec();
+		icVector3 posx1y2 = poly->qlist[i]->verts[1]->pos();
+
+		icVector3 pt(0.);
+		double f_11 = vecx1y1.x;
+		double f_12 = vecx1y2.x;
+		double f_21 = vecx2y1.x;
+		double f_22 = vecx2y2.x;
+
+		double g_11 = vecx1y1.y;
+		double g_12 = vecx1y2.y;
+		double g_21 = vecx2y1.y;
+		double g_22 = vecx2y2.y;
+
+		double a00 = f_11;
+		double a10 = f_21 - f_11;
+		double a01 = f_12 - f_11;
+		double a11 = f_11 - f_21 - f_12 + f_22;
+		double b00 = g_11;
+		double b10 = g_21 - g_11;
+		double b01 - g_12 - g_11;
+		double b11 = g_11 - g_21 - g_12 + g_22;
+		double c00 = a11 * b00 - a00 * b11;
+		double c10 = a11 * b10 - a10 * b11;
+		double c01 = a11 * b01 - a01 * b11;
+
+		if (c01 == 0.0) {
+			std::cout << "c01 is 0" << std::endl;
+			continue;
+		}
+	}
 }

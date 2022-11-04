@@ -23,6 +23,7 @@ Polyhedron* poly;
 std::vector<PolyLine> lines;
 std::vector<icVector3> points;
 std::vector<Polyline2> polylines;
+std::list<Singularity> singularities;
 
 /*scene related variables*/
 const float zoomspeed = 0.9;
