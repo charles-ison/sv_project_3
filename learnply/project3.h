@@ -48,11 +48,11 @@ struct Singularity {
 	icMatrix2x2 jacobi;
 };
 
-//void displaySingularities();
-//void extractSingularity();
-//void classifySingularity();
-//void classifySingularityByWinding();
-//void extractSeparatrix();
+void displaySingularities();
+void extractSingularity();
+void classifySingularity();
+void classifySingularityByWinding();
+void extractSeparatrix();
 
 viod streamlineTrace(Quad nextQuad, icVector3 nextPos, icVector3 nextVec, Quad currentQuad, icVector3 currentPos, icVector3 currentVec, double t, const icVector3 min, const icVector3 max);
 

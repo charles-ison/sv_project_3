@@ -481,5 +481,219 @@ void extractSingularity() {
 			std::cout << "c01 is 0" << std::endl;
 			continue;
 		}
+
+		double div = c10 / c01;
+		double a = -a11 * div;
+		double b = a10 - a01 * div;
+		double c = a00 - (a01 + a11) * c00 / c01;
+		double s[2];
+		bool flag = quadraticRoot(s[0], s[1], a, b, c);
+		if (!flag) {
+			continue;
+		}
+		double t[2];
+		t[0] = -c00 / c01 - div * s[0];
+		t[1] = -c00 / c01 - div * s[1];
+
+		for (int j = 0; j < 2; j++) {
+			if (s[j] > -EPSILON && s[j] < 1 + EPSILON &&
+				t[j] > -EPSILON && t[j] < 1 + EPSILON) {
+
+				pt.x = s[j];
+				pt.y = t[j];
+				Singularity point;
+				point.p = pt + posx1y1;
+				singularities.push_back(point);
+				double r0 = f_11 + pt.x * (f_21 - f_11) + pt.y * (f_12 - f_11) + pt.x * pt.y * (f_11 - f_21 - f_12 + f_22);
+				std::cout << r0 << std::endl;
+			}
+		}
 	}
+}
+
+void classifySingularityByWinding() {
+	for (Singularity s : singularities) {
+		icVector3 posn = s.p;
+		Quad* quad = findQuad(posn);
+		double winding_angle = 0;
+		double angles[4];
+			for (int i = 0; i < 4; i++) {
+			auto vi = quad->verts[i]->vec();
+			double angle = atan2(vi.entry[1], vi.entry[0]);
+			if (angle < 0) {
+				angle += 2 * M_PI;
+			}
+			angles[i] = angle;
+		}
+
+		for (int i = 0; i < 4; i++) {
+			int next = i + 1;
+			if (next > 3) {
+				next = 0;
+			}
+			double diff = (angles[next] - angles[i]);
+			if (diff < -M_PI) {
+				diff += 2 * M_PI;
+			}
+			if (diff > -M_PI) {
+				diff -= 2 * M_PI;
+			}
+			winding_angle += diff;
+		}
+		if (std::abs(winding_angle) < EPSILON) {
+			s.type = -1;
+		}
+		else if (winding_angle < 0) {
+			s.type = 2;
+			s.rgb = icVector2(0.0, 1.0, 0.0);
+		} else if (winding_angle > 0) {
+			s.type = 0;
+			s.rgb = icVector3(1.0, 0.0, 0.0);
+		}
+
+	}
+}
+
+void classifySingularity() {
+	for (Singularity s : singularities) {
+		icVector3 posn = s.p;
+		Quad quad = findQuad(posn);
+
+		int R[4] = { 2, 3, 0, 1 };
+		const icVector2 min = icVector2(quad.verts[R[0]]->x, quad.verts[R[0]]->y);
+		const icVector2 max = icVector2(quad.verts[R[2]]->x, quad.verts[R[2]]->y);
+		double len_x = max.x - min.x;
+		double len_y = max.y - min.y;
+
+		double dfdx = (-1 / len_x) * (max.y - posn.y) * quad.verts[R[0]]->vx
+			+ (1 / len_x) * (max.y - posn.y) * quad.verts[R[1]]->vx
+			+ (-1 / len_x) * (posn.y - min.y) * quad.verts[R[3]]->vx
+			+ (1 / len_x) * (posn.y - min.y) * quad.verts[R[2]]->vx;
+
+		double dfdy = (-1 / len_y) * (max.x - posn.x) * quad.verts[R[0]]->vx
+			+ (-1 / len_y) * (posn.x - min.x) * quad.verts[R[1]]->vx
+			+ (1 / len_y) * (max.x - posn.x) * quad.verts[R[3]]->vx
+			+ (1 / len_y) * (posn.x - min.x) * quad.verts[R[2]]->vx;
+
+		double dgdx = (-1 / len_x) * (max.y - posn.y) * quad.verts[R[0]]->vy
+			+ (1 / len_x) * (max.y - posn.y) * quad.verts[R[1]]->vy
+			+ (-1 / len_x) * (posn.y - min.y) * quad.verts[R[3]]->vy
+			+ (1 / len_x) * (posn.y - min.y) * quad.verts[R[2]]->vy;
+
+		double dfdy = (-1 / len_y) * (max.x - posn.x) * quad.verts[R[0]]->vy
+			+ (-1 / len_y) * (posn.x - min.x) * quad.verts[R[1]]->vy
+			+ (1 / len_y) * (max.x - posn.x) * quad.verts[R[3]]->vy
+			+ (1 / len_y) * (posn.x - min.x) * quad.verts[R[2]]->vy;
+
+		s.jacobi.entry[0][0] = dfdx;
+		s.jacobi.entry[0][1] = dfdy;
+		s.jacobi.entry[1][0] = dgdx;
+		s.jacobi.entry[1][1] = dgdy;
+
+		double tr = dfdx + dgdy;
+		double det = dfdx * dgdy - dfdy * dgdx;
+		double delta = tr * tr - 4 * det;
+		if (delta >= 0) {
+			double r1 = 0.5 * (tr + sqrt(delta));
+			double r2 = 0.5 * (tr - sqrt(delta));
+			if (r1 == 0 && r2 == 0) {
+				s.type = -1;
+			}
+			else if (r1 >= 0 && r2 >= 0) {
+				s.type = 0;
+			}
+			else if (r1 <= 0 && r2 <= 0) {
+				s.type = 1;
+				s.rgb = icVector3(0.0, 0.0, 1.0);
+			} 
+			if (r1 > 0 && r2 < 0 || r1 < 0 && r2 > 0) {
+				s.type = 2;
+				s.rgb = icVector3(0.0, 1.0, 0.0);
+			}
+			else {
+				s.type = -1;
+			}
+		}
+		else {
+			if (tr == 0) {
+				s.type = 3;
+				s.rgb = icVector3(0.0, 1.0 1.0);
+			}
+			else {
+				s.type = 4;
+				s.rgb = icVector3(1.0, 1.0, 0.0);
+			}
+		}
+	}
+}
+
+
+// not done
+void extractSeparatrix() {
+	for (Singularity s : singularities) {
+		// Saddle
+		if (s.type == 2) {
+			double a = s.jacobi.entry[0][0];
+			double b = s.jacobi.entry[0][1];
+			double c = s.jacobi.entry[1][0];
+			double d = s.jacobi.entry[1][1];
+			double yd = (a + d) / 2;
+			double yr = (c - b) / 2;
+			double ys = std::sqrt((a - d) * (a - d) + (b + c) * (b + c)) / 2;
+			double theta = std::atan2(b + c, a - d);
+			double phi = std::atan(yr / ys);
+			double a_cos = std::cos(theta / 2);
+			double b_sin = -std::sin(theta / 2);
+			double c_sin = std::sin(theta / 2);
+			// bug here? shouldn't this be negative?
+			double d_cos = std::cos(theta / 2);
+			double a_sin_phi = std::sqrt(std::sin(phi + M_PHI / 4));
+			double a_cos_phi = std::sqrt(std::cos(phi + M_PHI / 4));
+			icVector3 maj_v = icVector3(0.0);
+			icVector3 min_v = icVector3(0.0);
+			maj_v.x = a_cos * (a_sin_phi + a_cos_phi) + b_sin * (a_sin_phi - a_cos_phi);
+			maj_v.y = c_sin * (a_sin_phi + a_cos_phi) + d_cos * (a_sin_phi - a_cos_phi);
+			min_v.y = a_cos * (a_sin_phi - a_cos_phi) + b_sin * (a_sin_phi + a_cos_phi);
+			min_v.y = c_sin * (a_sin_phi - a_cos_phi) + d_cos * (a_sin_phi + a_cos_phi);
+			double k = MIN_K / maj_v.length();
+
+
+			Polyline2 separatrix;
+			streamlineFB(separatrix, s.p + k * maj_v, STEP);
+			separatrix.rgb = icVector33(1.0, 0.0, 0.0);
+			polylines.push_back(separatrix);
+			separatrix.clear();
+
+			//TODO:Check these colors chase
+			streamlineFB(separatrix, s.p - k * maj_v, STEP);
+			separatrix.rgb = icVector33(0.0, 0.0, 1.0);
+			polylines.push_back(separatrix);
+
+			//TODO:Check these colors chase
+			streamlineFB(separatrix, s.p + k * min_v, STEP, false);
+			separatrix.rgb = icVector33(1.0, 0.0, 0.0);
+			polylines.push_back(separatrix);
+			separatrix.clear();
+
+			separatrix.clear();
+			streamlineFB(separatrix, s.p - k * min_v, STEP, false);
+			separatrix.rgb = icVector3(0.0, 0.0, 1.0);
+			polylines.push_back(separatrix);
+
+		}
+	}
+}
+
+void displaySingularities() {
+	CHECK_GL_ERROR();
+	for (Singularity sing : singularities) {
+		GLUquadric quadric = gluNewQuadric();
+		glPushMatrix();
+		glTranslated(sing.p.x, sing.p.y, sing.p.z);
+		glColor3f(sing.p.x, sing.p.y, sing.p.z);
+		gluSphere(quadric, 0.1, 16, 16);
+		glPopMatrix();
+		glDeleteQuadric(quadric);
+	}
+	glDisable(GL_BLEND);
 }
