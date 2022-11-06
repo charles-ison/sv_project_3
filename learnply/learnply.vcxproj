@@ -161,10 +161,9 @@
     <ClInclude Include="polyhedron.h" />
     <ClInclude Include="polyline.h" />
     <ClInclude Include="polyline2.h" />
-    <ClInclude Include="project2.h" />
+	<ClInclude Include="project3.h" />
     <ClInclude Include="tmatrix.h" />
     <ClInclude Include="trackball.h" />
-	  <ClInclude Include="project3.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

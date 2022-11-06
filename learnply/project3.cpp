@@ -311,7 +311,7 @@ void streamline(Polyline2 polyline, icVector3 seed, const double step) {
 
 void streamlineFB(Polyline2 polyline, icVector3 seed, const double step, bool forward) {
 	polyline.vertices.push_back(seed);
-	Quad quad = findQuad(seed);
+	Quad* quad = findQuad(seed);
 	icVector3 min, max;
 	findMinMaxField(min, max);
 	icVector3 currentPosition = seed;
@@ -324,12 +324,12 @@ void streamlineFB(Polyline2 polyline, icVector3 seed, const double step, bool fo
 		if (currentVector.length() < EPSILON) {
 			break;
 		}
-		icVector3 nextPosition = currPos + step * currVec * coef;
-		if (sinp2Boundary(nextPos, min, max)) {
+		icVector3 nextPosition = currentPosition + step * currentVector * coef;
+		if (sinp2Boundary(nextPosition, min, max)) {
 			polyline.vertices.push_back(nextPosition);
 			break;
 		}
-		Quad nextQuad = nullptr;
+		Quad* nextQuad = nullptr;
 		streamlineTrace(nextQuad, quad, currentPosition, currentVector * coef, step, min, max);
 		quad = nextQuad;
 		currentPosition = nextPosition;
@@ -358,11 +358,11 @@ void findMinMaxField(icVector3& min, icVector3& max) {
 	}
 }
 
-bool insideQuad(const Quad quad, const icVector3 p) {
-	double v0x = quad.verts[2]->x;
-	double v0y = quad.verts[2]->y;
-	double v2x = quad.verts[0]->x;
-	double v2y = quad.verts[0]->y;
+bool insideQuad(const Quad* quad, const icVector3 p) {
+	double v0x = quad->verts[2]->x;
+	double v0y = quad->verts[2]->y;
+	double v2x = quad->verts[0]->x;
+	double v2y = quad->verts[0]->y;
 	if (p.x >= v0x && p.x <= v2x && p.y >= v0y && p.y <= v2y) {
 		return true;
 	}
@@ -371,9 +371,9 @@ bool insideQuad(const Quad quad, const icVector3 p) {
 	}
 }
 
-Quad findQuad(const icVector3 p) {
+Quad* findQuad(const icVector3 p) {
 	for (int i = 0; i < poly->nquads; i++) {
-		Quad tempQuad = poly->qlist[i];
+		Quad* tempQuad = poly->qlist[i];
 		if (insideQuad(tempQuad, p)) {
 			return tempQuad;
 		}
@@ -381,36 +381,35 @@ Quad findQuad(const icVector3 p) {
 	return nullptr;
 }
 
-void streamlineTrace(Quad nextQuad, icVector3 nextPos, icVector3 nextVec, Quad currentQuad, icVector3 currentPos,
+void streamlineTrace(Quad* nextQuad, icVector3 nextPos, icVector3 nextVec, Quad* currentQuad, icVector3 currentPos,
 	icVector3 currentVec, double t, const icVector3 min, const icVector3 max) {
 
 	bool insideQuad = false;
 	while (!insideQuad) {
-		if (currentPos.x < min.x || currentPos.x > max.x) ||
-			currentPos.y < min.y || currentPos.y > max.y) {
+		if ((currentPos.x < min.x || currentPos.x > max.x) || (currentPos.y < min.y || currentPos.y > max.y)) {
 			nextQuad = nullptr; 
 			return;
 		}
 
 		double t_ = INFINITY;
-		Quad nextQuad = nullptr;
+		Quad* nextQuad = nullptr;
 		for (int i = 0; i < 4; i++) {
 			Edge edge = currentQuad.edges[i];
-			Vertex v0 = edge.verts[0];
-			Vertex v1 = edge.verts[1];
+			Vertex* v0 = edge.verts[0];
+			Vertex* v1 = edge.verts[1];
 			double temp;
 			if (std::abs(v0.x - v1.x) < EPSILON) {
-				temp = (v0.x - currentPos.x) / currentVec.x;
+				temp = (v0->x - currentPos.x) / currentVec.x;
 			}
 			else {
-				temp = (v0.y - currentPos.y) / currentVec.y;
+				temp = (v0->y - currentPos.y) / currentVec.y;
 			}
 			if (temp > 0 && temp < t) {
 				t_ = temp;
 				if (edge.quads[0] != currentQuad && edge.quads[1] == currentQuad) {
 					nextQuad = edge.quads[0];
 				}
-				else if (edge.quads[0] == currQuad && edge.quads[1] != currentQuad) {
+				else if (edge.quads[0] == currentQuad && edge.quads[1] != currentQuad) {
 					nextQuad = edge.quads[1];
 				}
 			}
@@ -434,7 +433,7 @@ void streamlineTrace(Quad nextQuad, icVector3 nextPos, icVector3 nextVec, Quad c
 	nextQuad = currentQuad;
 }
 
-bool quadraticRoot(double& r0, double& r1, double a, double b, double c, double d) {
+bool quadraticRoot(double& r0, double& r1, double a, double b, double c) {
 	double m = b * b - 4 * a * c;
 	if (m < 0) {
 		return false;
@@ -554,7 +553,7 @@ void classifySingularityByWinding() {
 		}
 		else if (winding_angle < 0) {
 			s.type = 2;
-			s.rgb = icVector2(0.0, 1.0, 0.0);
+			s.rgb = icVector3(0.0, 1.0, 0.0);
 		} else if (winding_angle > 0) {
 			s.type = 0;
 			s.rgb = icVector3(1.0, 0.0, 0.0);
@@ -566,7 +565,7 @@ void classifySingularityByWinding() {
 void classifySingularity() {
 	for (Singularity s : singularities) {
 		icVector3 posn = s.p;
-		Quad quad = findQuad(posn);
+		Quad* quad = findQuad(posn);
 
 		int R[4] = { 2, 3, 0, 1 };
 		const icVector2 min = icVector2(quad.verts[R[0]]->x, quad.verts[R[0]]->y);
@@ -589,7 +588,7 @@ void classifySingularity() {
 			+ (-1 / len_x) * (posn.y - min.y) * quad.verts[R[3]]->vy
 			+ (1 / len_x) * (posn.y - min.y) * quad.verts[R[2]]->vy;
 
-		double dfdy = (-1 / len_y) * (max.x - posn.x) * quad.verts[R[0]]->vy
+		double dgdy = (-1 / len_y) * (max.x - posn.x) * quad.verts[R[0]]->vy
 			+ (-1 / len_y) * (posn.x - min.x) * quad.verts[R[1]]->vy
 			+ (1 / len_y) * (max.x - posn.x) * quad.verts[R[3]]->vy
 			+ (1 / len_y) * (posn.x - min.x) * quad.verts[R[2]]->vy;
@@ -626,7 +625,7 @@ void classifySingularity() {
 		else {
 			if (tr == 0) {
 				s.type = 3;
-				s.rgb = icVector3(0.0, 1.0 1.0);
+				s.rgb = icVector3(0.0, 1.0, 1.0);
 			}
 			else {
 				s.type = 4;
@@ -666,19 +665,19 @@ void extractSeparatrix() {
 
 			Polyline2 separatrix;
 			streamlineFB(separatrix, s.p + k * maj_v, STEP);
-			separatrix.rgb = icVector33(1.0, 0.0, 0.0);
+			separatrix.rgb = icVector3(1.0, 0.0, 0.0);
 			polylines.push_back(separatrix);
 			separatrix.clear();
 
 			streamlineFB(separatrix, s.p - k * maj_v, STEP);
-			separatrix.rgb = icVector33(1.0, 0.0, 0.0);
+			separatrix.rgb = icVector3(1.0, 0.0, 0.0);
 			polylines.push_back(separatrix);
 			separatrix.clear();
 
 			k = MIN_K / min_v.length();
 
 			streamlineFB(separatrix, s.p + k * min_v, STEP, false);
-			separatrix.rgb = icVector33(0.0, 0.0, 1.0);
+			separatrix.rgb = icVector3(0.0, 0.0, 1.0);
 			polylines.push_back(separatrix);
 			separatrix.clear();
 
