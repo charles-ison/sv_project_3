@@ -33,7 +33,7 @@ void flattenPolyhedron();
 //bool isZero(double x);
 
 void findMinMaxField(icVector3& min, icVector3& max);
-//icVector3 findVector(Quad quad, const icVector3 p);
+//icVector3 getVector(Quad quad, const icVector3 p);
 
 bool insideQuad(const Quad quad, const icVector3 p);
 Quad findQuad(const icVector3 p);

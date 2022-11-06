@@ -434,6 +434,16 @@ void streamlineTrace(Quad nextQuad, icVector3 nextPos, icVector3 nextVec, Quad c
 	nextQuad = currentQuad;
 }
 
+bool quadraticRoot(double& r0, double& r1, double a, double b, double c, double d) {
+	double m = b * b - 4 * a * c;
+	if (m < 0) {
+		return false;
+	}
+	r0 = (-b - std::sqrt(m)) / (2 * a);
+	r1 = (-b + std::sqrt(m)) / (2 * a);
+	return true;
+}
+
 bool singRoot(double r0, double r1, double a, double b, double c, double d) {
 	double f0 = b - a - (c + d);
 	double f1 = (c + d);
@@ -441,7 +451,6 @@ bool singRoot(double r0, double r1, double a, double b, double c, double d) {
 	return quadraticRoot(r0, r1, f0, f1, f2);
 }
 
-// not done
 void extractSingularity() {
 	singularities.clear();
 	for (int i = 0; i < poly->nquads; i++) {
@@ -471,7 +480,7 @@ void extractSingularity() {
 		double a11 = f_11 - f_21 - f_12 + f_22;
 		double b00 = g_11;
 		double b10 = g_21 - g_11;
-		double b01 - g_12 - g_11;
+		double b01 = g_12 - g_11;
 		double b11 = g_11 - g_21 - g_12 + g_22;
 		double c00 = a11 * b00 - a00 * b11;
 		double c10 = a11 * b10 - a10 * b11;
@@ -627,8 +636,6 @@ void classifySingularity() {
 	}
 }
 
-
-// not done
 void extractSeparatrix() {
 	for (Singularity s : singularities) {
 		// Saddle
@@ -657,25 +664,24 @@ void extractSeparatrix() {
 			min_v.y = c_sin * (a_sin_phi - a_cos_phi) + d_cos * (a_sin_phi + a_cos_phi);
 			double k = MIN_K / maj_v.length();
 
-
 			Polyline2 separatrix;
 			streamlineFB(separatrix, s.p + k * maj_v, STEP);
 			separatrix.rgb = icVector33(1.0, 0.0, 0.0);
 			polylines.push_back(separatrix);
 			separatrix.clear();
 
-			//TODO:Check these colors chase
 			streamlineFB(separatrix, s.p - k * maj_v, STEP);
-			separatrix.rgb = icVector33(0.0, 0.0, 1.0);
-			polylines.push_back(separatrix);
-
-			//TODO:Check these colors chase
-			streamlineFB(separatrix, s.p + k * min_v, STEP, false);
 			separatrix.rgb = icVector33(1.0, 0.0, 0.0);
 			polylines.push_back(separatrix);
 			separatrix.clear();
 
+			k = MIN_K / min_v.length();
+
+			streamlineFB(separatrix, s.p + k * min_v, STEP, false);
+			separatrix.rgb = icVector33(0.0, 0.0, 1.0);
+			polylines.push_back(separatrix);
 			separatrix.clear();
+
 			streamlineFB(separatrix, s.p - k * min_v, STEP, false);
 			separatrix.rgb = icVector3(0.0, 0.0, 1.0);
 			polylines.push_back(separatrix);
