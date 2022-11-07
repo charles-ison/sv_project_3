@@ -42,6 +42,14 @@ public:
 	void *other_props = NULL;
 public:
 	Vertex(double xx, double yy, double zz) { x = xx; y = yy; z = zz; }
+
+	icVector3 pos() {
+		return icVector3(x, y, z);
+	}
+
+	icVector3 vec() {
+		return icVector3(vx, vy, vz);
+	}
 };
 
 class Edge {

@@ -1,3 +1,6 @@
+#define _USE_MATH_DEFINES
+
+#include "glError.h"
 #include "project3.h"
 #include "polyhedron.h"
 #include "iostream"
@@ -5,9 +8,13 @@
 #include <vector>
 #include <set>
 #include <map>
+#include <math.h>
 #include "polyline2.h"
 
 #define EPSILON 0.01
+#define MIN_K 0.05
+#define STEP 0.001
+
 extern Polyhedron* poly;
 extern std::vector<Polyline2> polylines;
 extern std::list<Singularity> singularities;
@@ -309,6 +316,19 @@ void streamline(Polyline2 polyline, icVector3 seed, const double step) {
 	polyline.merge(lineBack);
 }
 
+// maybe done?
+bool onBoundary(icVector3 nextPosition, icVector3 min, icVector3 max) {
+	if (nextPosition.x == min.x || nextPosition.x == max.x) {
+		return false;
+	}
+	else if (nextPosition.y == min.y || nextPosition.y == max.y) {
+		return false;
+	}
+	else {
+		return true;
+	}
+}
+
 void streamlineFB(Polyline2 polyline, icVector3 seed, const double step, bool forward) {
 	polyline.vertices.push_back(seed);
 	Quad* quad = findQuad(seed);
@@ -325,7 +345,7 @@ void streamlineFB(Polyline2 polyline, icVector3 seed, const double step, bool fo
 			break;
 		}
 		icVector3 nextPosition = currentPosition + step * currentVector * coef;
-		if (sinp2Boundary(nextPosition, min, max)) {
+		if (onBoundary(nextPosition, min, max)) {
 			polyline.vertices.push_back(nextPosition);
 			break;
 		}
@@ -337,7 +357,7 @@ void streamlineFB(Polyline2 polyline, icVector3 seed, const double step, bool fo
 	}
 }
 
-// not done
+// maybe done?
 void findMinMaxField(icVector3& min, icVector3& max) {
 	min.x = poly->vlist[0]->x;
 	min.y = poly->vlist[0]->y;
@@ -354,6 +374,16 @@ void findMinMaxField(icVector3& min, icVector3& max) {
 		}
 		if (min.z > poly->vlist[i]->z) {
 			min.z = poly->vlist[i]->z;
+		}
+
+		if (max.x < poly->vlist[i]->x) {
+			max.x = poly->vlist[i]->x;
+		}
+		if (max.y < poly->vlist[i]->y) {
+			max.y = poly->vlist[i]->y;
+		}
+		if (max.z < poly->vlist[i]->z) {
+			max.z = poly->vlist[i]->z;
 		}
 	}
 }
@@ -381,8 +411,37 @@ Quad* findQuad(const icVector3 p) {
 	return nullptr;
 }
 
-void streamlineTrace(Quad* nextQuad, icVector3 nextPos, icVector3 nextVec, Quad* currentQuad, icVector3 currentPos,
-	icVector3 currentVec, double t, const icVector3 min, const icVector3 max) {
+bool isZero(double x) {
+	double e = std::numeric_limits<double>::epsilon();
+	return std::abs(x) < e;
+}
+
+//not done
+icVector3 bilinear(icVector3 pt, Vertex v0, Vertex v1, Vertex v2, Vertex v3) {
+	double alpha0 = (pt.x - v0.x) / (v1.x - v0.x);
+	double alpha1 = (pt.x - v3.x) / (v2.x - v3.x);
+	double py = (1 - alpha0) * v0.y + (alpha0) * v1.y;
+	double qy = (1 - alpha1) * v3.y + (alpha0) * v2.y;
+	double beta = (pt.y - py) / (qy - py);
+
+	double vx = (1-alpha0) * (1-beta) * v0.vx + alpha0 * (1-beta) * v1.vx + alpha1 * beta * v2.vx + (1-alpha1) * beta * v3.vx;
+	double vy = (1-alpha0) * (1-beta) * v0.vy + alpha0 * (1-beta) * v1.vy + alpha1 * beta * v2.vy + (1-alpha1) * beta * v3.vx;
+
+	return icVector3(vx, vy, 0);
+}
+
+// not done
+// get the vector from vector field by bilinear interpolation
+icVector3 getVector(Quad* quad, const icVector3 p) {
+	double x1 = quad->verts[2]->x;
+	double x2 = quad->verts[0]->x;
+	double y1 = quad->verts[2]->y;
+	double y2 = quad->verts[0]->y;
+
+	icVector3 v11(quad->verts[2]->vx, quad->verts[2]->vy, quad->verts[2]->vz);
+}
+
+void streamlineTrace(Quad* nextQuad, Quad* currentQuad, icVector3 currentPos, icVector3 currentVec, double t, const icVector3 min, const icVector3 max) {
 
 	bool insideQuad = false;
 	while (!insideQuad) {
@@ -394,11 +453,11 @@ void streamlineTrace(Quad* nextQuad, icVector3 nextPos, icVector3 nextVec, Quad*
 		double t_ = INFINITY;
 		Quad* nextQuad = nullptr;
 		for (int i = 0; i < 4; i++) {
-			Edge edge = currentQuad.edges[i];
-			Vertex* v0 = edge.verts[0];
-			Vertex* v1 = edge.verts[1];
+			Edge* edge = currentQuad->edges[i];
+			Vertex* v0 = edge->verts[0];
+			Vertex* v1 = edge->verts[1];
 			double temp;
-			if (std::abs(v0.x - v1.x) < EPSILON) {
+			if (std::abs(v0->x - v1->x) < EPSILON) {
 				temp = (v0->x - currentPos.x) / currentVec.x;
 			}
 			else {
@@ -406,11 +465,11 @@ void streamlineTrace(Quad* nextQuad, icVector3 nextPos, icVector3 nextVec, Quad*
 			}
 			if (temp > 0 && temp < t) {
 				t_ = temp;
-				if (edge.quads[0] != currentQuad && edge.quads[1] == currentQuad) {
-					nextQuad = edge.quads[0];
+				if (edge->quads[0] != currentQuad && edge->quads[1] == currentQuad) {
+					nextQuad = edge->quads[0];
 				}
-				else if (edge.quads[0] == currentQuad && edge.quads[1] != currentQuad) {
-					nextQuad = edge.quads[1];
+				else if (edge->quads[0] == currentQuad && edge->quads[1] != currentQuad) {
+					nextQuad = edge->quads[1];
 				}
 			}
 		}
@@ -568,30 +627,30 @@ void classifySingularity() {
 		Quad* quad = findQuad(posn);
 
 		int R[4] = { 2, 3, 0, 1 };
-		const icVector2 min = icVector2(quad.verts[R[0]]->x, quad.verts[R[0]]->y);
-		const icVector2 max = icVector2(quad.verts[R[2]]->x, quad.verts[R[2]]->y);
+		const icVector2 min = icVector2(quad->verts[R[0]]->x, quad->verts[R[0]]->y);
+		const icVector2 max = icVector2(quad->verts[R[2]]->x, quad->verts[R[2]]->y);
 		double len_x = max.x - min.x;
 		double len_y = max.y - min.y;
 
-		double dfdx = (-1 / len_x) * (max.y - posn.y) * quad.verts[R[0]]->vx
-			+ (1 / len_x) * (max.y - posn.y) * quad.verts[R[1]]->vx
-			+ (-1 / len_x) * (posn.y - min.y) * quad.verts[R[3]]->vx
-			+ (1 / len_x) * (posn.y - min.y) * quad.verts[R[2]]->vx;
+		double dfdx = (-1 / len_x) * (max.y - posn.y) * quad->verts[R[0]]->vx
+			+ (1 / len_x) * (max.y - posn.y) * quad->verts[R[1]]->vx
+			+ (-1 / len_x) * (posn.y - min.y) * quad->verts[R[3]]->vx
+			+ (1 / len_x) * (posn.y - min.y) * quad->verts[R[2]]->vx;
 
-		double dfdy = (-1 / len_y) * (max.x - posn.x) * quad.verts[R[0]]->vx
-			+ (-1 / len_y) * (posn.x - min.x) * quad.verts[R[1]]->vx
-			+ (1 / len_y) * (max.x - posn.x) * quad.verts[R[3]]->vx
-			+ (1 / len_y) * (posn.x - min.x) * quad.verts[R[2]]->vx;
+		double dfdy = (-1 / len_y) * (max.x - posn.x) * quad->verts[R[0]]->vx
+			+ (-1 / len_y) * (posn.x - min.x) * quad->verts[R[1]]->vx
+			+ (1 / len_y) * (max.x - posn.x) * quad->verts[R[3]]->vx
+			+ (1 / len_y) * (posn.x - min.x) * quad->verts[R[2]]->vx;
 
-		double dgdx = (-1 / len_x) * (max.y - posn.y) * quad.verts[R[0]]->vy
-			+ (1 / len_x) * (max.y - posn.y) * quad.verts[R[1]]->vy
-			+ (-1 / len_x) * (posn.y - min.y) * quad.verts[R[3]]->vy
-			+ (1 / len_x) * (posn.y - min.y) * quad.verts[R[2]]->vy;
+		double dgdx = (-1 / len_x) * (max.y - posn.y) * quad->verts[R[0]]->vy
+			+ (1 / len_x) * (max.y - posn.y) * quad->verts[R[1]]->vy
+			+ (-1 / len_x) * (posn.y - min.y) * quad->verts[R[3]]->vy
+			+ (1 / len_x) * (posn.y - min.y) * quad->verts[R[2]]->vy;
 
-		double dgdy = (-1 / len_y) * (max.x - posn.x) * quad.verts[R[0]]->vy
-			+ (-1 / len_y) * (posn.x - min.x) * quad.verts[R[1]]->vy
-			+ (1 / len_y) * (max.x - posn.x) * quad.verts[R[3]]->vy
-			+ (1 / len_y) * (posn.x - min.x) * quad.verts[R[2]]->vy;
+		double dgdy = (-1 / len_y) * (max.x - posn.x) * quad->verts[R[0]]->vy
+			+ (-1 / len_y) * (posn.x - min.x) * quad->verts[R[1]]->vy
+			+ (1 / len_y) * (max.x - posn.x) * quad->verts[R[3]]->vy
+			+ (1 / len_y) * (posn.x - min.x) * quad->verts[R[2]]->vy;
 
 		s.jacobi.entry[0][0] = dfdx;
 		s.jacobi.entry[0][1] = dfdy;
@@ -653,8 +712,8 @@ void extractSeparatrix() {
 			double c_sin = std::sin(theta / 2);
 			// bug here? shouldn't this be negative?
 			double d_cos = std::cos(theta / 2);
-			double a_sin_phi = std::sqrt(std::sin(phi + M_PHI / 4));
-			double a_cos_phi = std::sqrt(std::cos(phi + M_PHI / 4));
+			double a_sin_phi = std::sqrt(std::sin(phi + M_PI / 4));
+			double a_cos_phi = std::sqrt(std::cos(phi + M_PI / 4));
 			icVector3 maj_v = icVector3(0.0);
 			icVector3 min_v = icVector3(0.0);
 			maj_v.x = a_cos * (a_sin_phi + a_cos_phi) + b_sin * (a_sin_phi - a_cos_phi);
@@ -692,13 +751,13 @@ void extractSeparatrix() {
 void displaySingularities() {
 	CHECK_GL_ERROR();
 	for (Singularity sing : singularities) {
-		GLUquadric quadric = gluNewQuadric();
+		GLUquadric* quadric = gluNewQuadric();
 		glPushMatrix();
 		glTranslated(sing.p.x, sing.p.y, sing.p.z);
 		glColor3f(sing.p.x, sing.p.y, sing.p.z);
 		gluSphere(quadric, 0.1, 16, 16);
 		glPopMatrix();
-		glDeleteQuadric(quadric);
+		gluDeleteQuadric(quadric);
 	}
 	glDisable(GL_BLEND);
 }

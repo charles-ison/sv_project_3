@@ -33,10 +33,10 @@ void part3B(std::list<CriticalPoint> criticalPoints);
 void flattenPolyhedron();
 
 // Actual Project 3 Stuff
-//bool isZero(double x);
+bool isZero(double x);
 
 void findMinMaxField(icVector3& min, icVector3& max);
-//icVector3 getVector(Quad quad, const icVector3 p);
+icVector3 getVector(Quad* quad, const icVector3 p);
 
 bool insideQuad(const Quad* quad, const icVector3 p);
 Quad* findQuad(const icVector3 p);
@@ -57,6 +57,6 @@ void classifySingularity();
 void classifySingularityByWinding();
 void extractSeparatrix();
 
-void streamlineTrace(Quad* nextQuad, icVector3 nextPos, icVector3 nextVec, Quad* currentQuad, icVector3 currentPos, icVector3 currentVec, double t, const icVector3 min, const icVector3 max);
+void streamlineTrace(Quad* nextQuad, Quad* currentQuad, icVector3 currentPos, icVector3 currentVec, double t, const icVector3 min, const icVector3 max);
 
 
