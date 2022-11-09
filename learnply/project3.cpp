@@ -309,7 +309,7 @@ void part3B(std::list<CriticalPoint> criticalPoints) {
 }
 
 // Actual Project 3 Stuff
-void streamline(Polyline2 polyline, icVector3 seed, const double step) {
+void streamline(Polyline2& polyline, icVector3 seed, const double step) {
 	streamlineFB(polyline, seed, step);
 	Polyline2 lineBack;
 	streamlineFB(lineBack, seed, step, false);
@@ -329,7 +329,7 @@ bool onBoundary(icVector3 nextPosition, icVector3 min, icVector3 max) {
 	}
 }
 
-void streamlineFB(Polyline2 polyline, icVector3 seed, const double step, bool forward) {
+void streamlineFB(Polyline2& polyline, icVector3 seed, const double step, bool forward) {
 	polyline.vertices.push_back(seed);
 	Quad* quad = findQuad(seed);
 	icVector3 min, max;

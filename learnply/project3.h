@@ -41,8 +41,8 @@ icVector3 getVector(Quad* quad, const icVector3 p);
 bool insideQuad(const Quad* quad, const icVector3 p);
 Quad* findQuad(const icVector3 p);
 
-void streamlineFB(Polyline2 polyline, icVector3 seed, const double step, bool forward = true);
-void streamline(Polyline2 polyline, icVector3 seed, const double step);
+void streamlineFB(Polyline2& polyline, icVector3 seed, const double step, bool forward = true);
+void streamline(Polyline2& polyline, icVector3 seed, const double step);
 
 struct Singularity {
 	int type = -1;
