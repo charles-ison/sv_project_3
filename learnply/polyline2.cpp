@@ -56,6 +56,7 @@ void displayPolylines(std::vector<Polyline2> polylines) {
 		glColor3f(polyline.rgb.entry[0], polyline.rgb.entry[1], polyline.rgb.entry[2]);
 		glBegin(GL_LINE_STRIP);
 
+		std::cout << polyline.vertices.size() << std::endl;
 		for (auto it = polyline.vertices.begin(); it != polyline.vertices.end(); it++) {
 			glVertex3d(it->entry[0], it->entry[1], it->entry[2]);
 		}

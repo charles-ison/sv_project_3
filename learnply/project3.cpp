@@ -433,13 +433,34 @@ icVector3 bilinear(icVector3 pt, Vertex v0, Vertex v1, Vertex v2, Vertex v3) {
 // not done
 // get the vector from vector field by bilinear interpolation
 icVector3 getVector(Quad* quad, const icVector3 p) {
-	double x1 = quad->verts[2]->x;
-	double x2 = quad->verts[0]->x;
-	double y1 = quad->verts[2]->y;
-	double y2 = quad->verts[0]->y;
+	//double x1 = quad->verts[2]->x;
+	//double x2 = quad->verts[0]->x;
+	//double y1 = quad->verts[2]->y;
+	//double y2 = quad->verts[0]->y;
 
-	icVector3 v11(quad->verts[2]->vx, quad->verts[2]->vy, quad->verts[2]->vz);
-	return v11;
+	//icVector3 v11(quad->verts[2]->vx, quad->verts[2]->vy, quad->verts[2]->vz);
+
+	Vertex* x2y2 = quad->verts[0];
+	Vertex* x1y2 = quad->verts[1];
+	Vertex* x1y1 = quad->verts[2];
+	Vertex* x2y1 = quad->verts[3];
+
+	double x1y1XVector = x1y1->vx;
+	double x1y1YVector = x1y1->vy;
+	double x1y2XVector = x1y2->vx;
+	double x1y2YVector = x1y2->vy;
+	double x2y1XVector = x2y1->vx;
+	double x2y1YVector = x2y1->vy;
+	double x2y2XVector = x2y2->vx;
+	double x2y2YVector = x2y2->vy;
+
+	//double newXVector = (x2 * x1y1Scalar - x1 * x2y1Scalar - x2 * x1y2Scalar + x1 * x2y2Scalar) / (x1y1Scalar - x2y1Scalar - x1y2Scalar + x2y2Scalar);
+	//double newYVector = (y2 * x1y1Scalar - y2 * x2y1Scalar - y1 * x1y2Scalar + y1 * x2y2Scalar) / (x1y1Scalar - x2y1Scalar - x1y2Scalar + x2y2Scalar);
+	double newXVector = 0.0;
+	double newYVector = 0.0;
+	double newZVector = 0.0;
+
+	return icVector3(newXVector, newYVector, newZVector);
 }
 
 void streamlineTrace(Quad* nextQuad, Quad* currentQuad, icVector3 currentPos, icVector3 currentVec, double t, const icVector3 min, const icVector3 max) {
