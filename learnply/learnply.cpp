@@ -93,7 +93,7 @@ Main program.
 int main(int argc, char* argv[])
 {
 	/*load mesh from ply file*/
-	FILE* this_file = fopen("../data/scalar_data/r2.ply", "r");
+	FILE* this_file = fopen("../data/vector_data/v1.ply", "r");
 	poly = new Polyhedron(this_file);
 	fclose(this_file);
 	

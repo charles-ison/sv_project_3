@@ -13,6 +13,7 @@ class Polyline2 {
 		double scalar = 0.0;
 		bool isNeighbor(const Polyline2 polyline);
 		void merge(const Polyline2 polyline);
+		void clear();
 };
 
 std::list<Polyline2> marchingSquare(const Polyhedron& polyhedron, const double threshold);

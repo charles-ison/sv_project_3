@@ -439,6 +439,7 @@ icVector3 getVector(Quad* quad, const icVector3 p) {
 	double y2 = quad->verts[0]->y;
 
 	icVector3 v11(quad->verts[2]->vx, quad->verts[2]->vy, quad->verts[2]->vz);
+	return v11;
 }
 
 void streamlineTrace(Quad* nextQuad, Quad* currentQuad, icVector3 currentPos, icVector3 currentVec, double t, const icVector3 min, const icVector3 max) {

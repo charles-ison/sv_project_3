@@ -15,6 +15,9 @@ bool Polyline2::isNeighbor(const Polyline2 polyline) {
 
 void Polyline2::merge(const Polyline2 polyline) {
 	Polyline2 polylineCopy = polyline;
+	//TODO vertices and polyline have empty lists here, figure out why (probably lack of references)
+	std::cout << vertices.size() << std::endl;
+	std::cout << polyline.vertices.size() << std::endl;
 	if ((vertices.front() - polyline.vertices.front()).length() < EPSILON) {
 		polylineCopy.vertices.pop_front();
 		for (auto i = polylineCopy.vertices.begin(); i != polylineCopy.vertices.end(); i++) {
@@ -237,4 +240,11 @@ std::vector<Polyline2> makePolylineFromEdges(std::list<Polyline2> edges) {
 		}
 	}
 	return newPolylines;
+}
+
+void Polyline2::clear() {
+	vertices.clear();
+	rgb = icVector3(1.0, 0.0, 0.0);
+	weight = 1.0;
+	scalar = 0.0;
 }
