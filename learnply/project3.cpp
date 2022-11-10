@@ -19,96 +19,6 @@ extern Polyhedron* poly;
 extern std::vector<Polyline2> polylines;
 extern std::list<Singularity> singularities;
 
-double findMin() {
-	double min = poly->vlist[0]->scalar;
-	for (int i = 1; i < poly->nverts; i++) {
-		double vertexScalar = poly->vlist[i]->scalar;
-		if (vertexScalar < min) {
-			min = vertexScalar;
-		}
-	}
-	return min;
-}
-
-double findMax() {
-	double max = poly->vlist[0]->scalar;
-	for (int i = 1; i < poly->nverts; i++) {
-		double vertexScalar = poly->vlist[i]->scalar;
-		if (vertexScalar > max) {
-			max = vertexScalar;
-		}
-	}
-	return max;
-}
-
-icVector3 convertHSVToRGB(icVector3 hsv) {
-	double h = hsv.x;
-	double s = hsv.y;
-	double v = hsv.z;
-	double r, g, b;
-
-	double c = s * v;
-	double x = c * (1 - abs(fmod(h / 60.0, 2) - 1));
-	double m = v - c;
-
-	if (h >= 0 && h < 60) {
-		r = c, g = x, b = 0;
-	}
-	else if (h >= 60 && h < 120) {
-		r = x, g = c, b = 0;
-	}
-	else if (h >= 120 && h < 180) {
-		r = 0, g = c, b = x;
-	}
-	else if (h >= 180 && h < 240) {
-		r = 0, g = x, b = c;
-	}
-	else if (h >= 240 && h < 300) {
-		r = x, g = 0, b = c;
-	}
-	else {
-		r = c, g = 0, b = x;
-	}
-
-	return icVector3(r + m, g + m, b + m);
-}
-
-icVector3 convertRGBToHSV(icVector3 rgb) {
-	double r = rgb.x;
-	double g = rgb.y;
-	double b = rgb.z;
-	double h, s, v;
-
-	double cmax = std::max(r, std::max(g, b));
-	double cmin = std::min(r, std::min(g, b));
-	double diff = cmax - cmin;
-
-	if (cmax == cmin) {
-		h = 0;
-	} 
-	else if (cmax == r) {
-		h = fmod(60 * ((g - b) / diff) + 360, 360);
-	}
-	else if (cmax == g) {
-		h = fmod(60 * ((b - r) / diff) + 120, 360);
-	}
-	else if (cmax == b) {
-		h = fmod(60 * ((r - g) / diff) + 240, 360);
-	}
-
-	if (cmax == 0) {
-		s = 0;
-	}
-	else {
-		s = (diff / cmax);
-	}
-
-	v = cmax;
-
-	return icVector3(h, s, v);
-
-}
-
 void streamline(Polyline2& polyline, icVector3 seed, const double step) {
 	streamlineFB(polyline, seed, step);
 	Polyline2 lineBack;
@@ -116,21 +26,21 @@ void streamline(Polyline2& polyline, icVector3 seed, const double step) {
 	polyline.merge(lineBack);
 }
 
-// maybe done?
 bool onBoundary(icVector3 nextPosition, icVector3 min, icVector3 max) {
 	if (nextPosition.x == min.x || nextPosition.x == max.x) {
-		return false;
+		return true;
 	}
 	else if (nextPosition.y == min.y || nextPosition.y == max.y) {
-		return false;
+		return true;
 	}
 	else {
-		return true;
+		return false;
 	}
 }
 
 void streamlineFB(Polyline2& polyline, icVector3 seed, const double step, bool forward) {
 	polyline.vertices.push_back(seed);
+	std::cout << "first find quad" << std::endl;
 	Quad* quad = findQuad(seed);
 	icVector3 min, max;
 	findMinMaxField(min, max);
@@ -139,7 +49,10 @@ void streamlineFB(Polyline2& polyline, icVector3 seed, const double step, bool f
 	if (!forward) {
 		coef = -1.0;
 	}
+	int i = 0;
 	while (quad != nullptr) {
+		std::cout << i << std::endl;
+		i++;
 		icVector3 currentVector = getVector(quad, currentPosition);
 		if (currentVector.length() < EPSILON) {
 			break;
@@ -205,9 +118,11 @@ Quad* findQuad(const icVector3 p) {
 	for (int i = 0; i < poly->nquads; i++) {
 		Quad* tempQuad = poly->qlist[i];
 		if (insideQuad(tempQuad, p)) {
+			std::cout << "inside FindQuad return tempQuad" << std::endl;
 			return tempQuad;
 		}
 	}
+	std::cout << "inside FindQuad return nullptr" << std::endl;
 	return nullptr;
 }
 
@@ -267,14 +182,16 @@ icVector3 getVector(Quad* quad, const icVector3 p) {
 void streamlineTrace(Quad* nextQuad, Quad* currentQuad, icVector3 currentPos, icVector3 currentVec, double t, const icVector3 min, const icVector3 max) {
 
 	bool insideQuad = false;
+	int i = 0;
 	while (!insideQuad) {
 		if ((currentPos.x < min.x || currentPos.x > max.x) || (currentPos.y < min.y || currentPos.y > max.y)) {
+			std::cout << "outside bounds, ending early" << std::endl;
 			nextQuad = nullptr; 
 			return;
 		}
 
 		double t_ = INFINITY;
-		Quad* nextQuad = nullptr;
+		Quad* nextQuad_ = nullptr;
 		for (int i = 0; i < 4; i++) {
 			Edge* edge = currentQuad->edges[i];
 			Vertex* v0 = edge->verts[0];
@@ -286,32 +203,36 @@ void streamlineTrace(Quad* nextQuad, Quad* currentQuad, icVector3 currentPos, ic
 			else {
 				temp = (v0->y - currentPos.y) / currentVec.y;
 			}
-			if (temp > 0 && temp < t) {
+			if (temp > 0 && temp < t_) {
 				t_ = temp;
 				if (edge->quads[0] != currentQuad && edge->quads[1] == currentQuad) {
-					nextQuad = edge->quads[0];
+					nextQuad_ = edge->quads[0];
 				}
 				else if (edge->quads[0] == currentQuad && edge->quads[1] != currentQuad) {
-					nextQuad = edge->quads[1];
+					nextQuad_ = edge->quads[1];
 				}
 			}
 		}
-		if (nextQuad == nullptr) {
+		if (nextQuad_ == nullptr) {
 			currentPos = currentPos + currentVec * t;
+			std::cout << "second find quad" << std::endl;
 			nextQuad = findQuad(currentPos);
 			return;
 		}
 		else {
 			if (t_ >= t) {
+				std::cout << "t_ >= t" << std::endl;
 				insideQuad = true;
 			} 
 			else {
-				currentQuad = nextQuad;
+				std::cout << "t_ < t" << std::endl;
+				currentQuad = nextQuad_;
 				t = t - t_;
 				currentPos = currentPos + currentVec * t_;
 			}
 		}
 	}
+	std::cout << "do we reach here?" << std::endl;
 	nextQuad = currentQuad;
 }
 
