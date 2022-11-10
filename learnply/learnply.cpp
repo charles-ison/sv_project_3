@@ -480,41 +480,6 @@ void keyboard(unsigned char key, int x, int y) {
 		glutPostRedisplay();
 		break;
 
-	case 'b':
-		display_mode = 7;
-		glutPostRedisplay();
-		break;
-
-	case 'c':
-		display_mode = 8;
-		glutPostRedisplay();
-		break;
-
-	case 'd':
-		display_mode = 9;
-		glutPostRedisplay();
-		break;
-
-	case 'e':
-		display_mode = 10;
-		glutPostRedisplay();
-		break;
-
-	case 'f':
-		display_mode = 11;
-		glutPostRedisplay();
-		break;
-
-	case 'g':
-		display_mode = 12;
-		glutPostRedisplay();
-		break;
-
-	case 'h':
-		display_mode = 13;
-		glutPostRedisplay();
-		break;
-
 	case 'r':	// reset rotation and transformation
 		mat_ident(rotmat);
 		translation[0] = 0;
@@ -903,14 +868,6 @@ void drawBasicSolidPoly() {
 	}
 }
 
-void drawCriticalPoints(std::list<CriticalPoint> criticalPoints) {
-	for (CriticalPoint criticalPoint : criticalPoints) {
-		icVector3 vector = criticalPoint.vector;
-		icVector3 color = criticalPoint.color;
-		drawDot(vector.x, vector.y, vector.z, 0.15, color.x, color.y, color.z);
-	}
-}
-
 void display_polyhedron(Polyhedron* poly)
 {
 	unsigned int i, j;
@@ -996,76 +953,6 @@ void display_polyhedron(Polyhedron* poly)
 	case 5:	// IBFV vector field display
 	{
 		displayIBFV();
-		glutPostRedisplay();
-	}
-	break;
-
-	case 6:
-	{
-		drawBasicSolidPoly();
-		part2A();
-		glutPostRedisplay();
-	}
-	break;
-
-	case 7:
-	{
-		drawBasicSolidPoly();
-		part2B();
-		glutPostRedisplay();
-	}
-	break;
-
-	case 8:
-	{
-		drawBasicSolidPoly();
-		part2C();
-		glutPostRedisplay();
-	}
-	break;
-
-	case 9:
-	{
-		drawBasicSolidPoly();
-		part2D();
-		glutPostRedisplay();
-	}
-	break;
-
-	case 10: 
-	{
-		drawBasicSolidPoly();
-
-		std::list<CriticalPoint> criticalPoints = getCriticalPoints();
-		drawCriticalPoints(criticalPoints);
-		glutPostRedisplay();
-
-		break;
-	}
-	break;
-
-	case 11:
-	{
-		drawBasicSolidPoly();
-		std::list<CriticalPoint> criticalPoints = getCriticalPoints();
-		drawCriticalPoints(criticalPoints);
-		part3B(criticalPoints);
-		glutPostRedisplay();
-	}
-	break;
-
-	case 12:
-	{
-		drawBasicSolidPoly();
-		flattenPolyhedron();
-		glutPostRedisplay();
-	}
-	break;
-
-	case 13:
-	{
-		drawBasicSolidPoly();
-		polylines.clear();
 		glutPostRedisplay();
 	}
 	break;

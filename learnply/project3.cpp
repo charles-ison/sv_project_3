@@ -11,15 +11,13 @@
 #include <math.h>
 #include "polyline2.h"
 
-#define EPSILON 0.01
+#define EPSILON 0.001
 #define MIN_K 0.05
 #define STEP 0.001
 
 extern Polyhedron* poly;
 extern std::vector<Polyline2> polylines;
 extern std::list<Singularity> singularities;
-
-int numberOfContours = 100;
 
 double findMin() {
 	double min = poly->vlist[0]->scalar;
@@ -111,204 +109,6 @@ icVector3 convertRGBToHSV(icVector3 rgb) {
 
 }
 
-void visualizeHeight() {
-	double min = findMin();
-	double max = findMax();
-
-	for (int i = 0; i < poly->nverts; i++) {
-		auto& vertex = poly->vlist[i];
-		double vertexScalar = vertex->scalar;
-		double height = (vertexScalar - min) / (max - min);
-		vertex->z = 15 * height;
-	}
-}
-
-//TODO: this is a hack and should be removed in favor of constructing a polyline from vertexes in future iterations
-void flattenPolyhedron() {
-	for (int i = 0; i < poly->nverts; i++) {
-		auto& vertex = poly->vlist[i];
-		vertex->z = 0;
-	}
-}
-
-void part2A() {
-	polylines.clear();
-	double min = findMin();
-	double max = findMax();
-	double interval = (max - min) / numberOfContours;
-	for (int i = 0; i < numberOfContours; i++) {
-		std::list<Polyline2> edges = marchingSquare(*poly, min+(i*interval));
-		std::vector<Polyline2> newPolylines = makePolylineFromEdges(edges);
-		for (auto polyline : newPolylines) {
-			polyline.rgb = icVector3(1, 0, 0);
-			polylines.push_back(polyline);
-		}
-	}
-	glutPostOverlayRedisplay();
-}
-
-void part2B() {
-	polylines.clear();
-	double min = findMin();
-	double max = findMax();
-	double interval = (max - min) / numberOfContours;
-	for (int i = 0; i < numberOfContours; i++) {
-		std::list<Polyline2> edges = marchingSquare(*poly, min + (i * interval));
-		std::vector<Polyline2> newPolylines = makePolylineFromEdges(edges);
-		for (auto polyline : newPolylines) {
-			icVector3 redRGB(1.0, 0.0, 0.0);
-			icVector3 blueRGB(0.0, 0.0, 1.0);
-			icVector3 redHSV = convertRGBToHSV(redRGB);
-			icVector3 blueHSV = convertRGBToHSV(blueRGB);
-
-			double doubleNumberOfContours = 1.0 * (numberOfContours - 1);
-			double redScalar = (1.0 * i) / (doubleNumberOfContours);
-			double blueScalar = (doubleNumberOfContours - (1.0 * i)) / doubleNumberOfContours;
-
-			icVector3 newHSV = (redHSV * redScalar) + (blueHSV * blueScalar);
-			polyline.rgb = convertHSVToRGB(newHSV);
-
-			polylines.push_back(polyline);
-		}
-	}
-	glutPostOverlayRedisplay();
-}
-
-void part2C() {
-	polylines.clear();
-	visualizeHeight();
-	polylines.clear();
-	double min = findMin();
-	double max = findMax();
-	double interval = (max - min) / numberOfContours;
-	for (int i = 0; i < numberOfContours; i++) {
-		std::list<Polyline2> edges = marchingSquare(*poly, min + (i * interval));
-		std::vector<Polyline2> newPolylines = makePolylineFromEdges(edges);
-		for (auto polyline : newPolylines) {
-			polyline.rgb = icVector3(1, 0, 0);
-			polylines.push_back(polyline);
-		}
-	}
-	glutPostOverlayRedisplay();
-}
-
-void part2D() {
-	polylines.clear();
-	visualizeHeight();
-	polylines.clear();
-	double min = findMin();
-	double max = findMax();
-	double interval = (max - min) / numberOfContours;
-	for (int i = 0; i < numberOfContours; i++) {
-		std::list<Polyline2> edges = marchingSquare(*poly, min + (i * interval));
-		std::vector<Polyline2> newPolylines = makePolylineFromEdges(edges);
-		for (auto polyline : newPolylines) {
-			icVector3 redRGB(1.0, 0.0, 0.0);
-			icVector3 blueRGB(0.0, 0.0, 1.0);
-			icVector3 redHSV = convertRGBToHSV(redRGB);
-			icVector3 blueHSV = convertRGBToHSV(blueRGB);
-
-			double doubleNumberOfContours = 1.0 * numberOfContours;
-			double redScalar = (1.0 * i) / (doubleNumberOfContours);
-			double blueScalar = (doubleNumberOfContours - (1.0 * i)) / doubleNumberOfContours;
-			icVector3 newHSV = (redHSV * redScalar) + (blueHSV * blueScalar);
-			polyline.rgb = convertHSVToRGB(newHSV);
-
-			polylines.push_back(polyline);
-		}
-	}
-	glutPostOverlayRedisplay();
-}
-
-std::list<CriticalPoint> getCriticalPoints() {
-	std::list<CriticalPoint> criticalPoints;
-
-	for (int i = 0; i < poly->nverts; i++) {
-		std::set<Relationship> relationships;
-		Vertex* potentialCriticalPoint = poly->vlist[i];
-		if (potentialCriticalPoint->nquads != 4) {
-			continue;
-		}
-		for (int j = 0; j < potentialCriticalPoint->nquads; j++) {
-			Quad* quad = potentialCriticalPoint->quads[j];
-			for (int k = 0; k < 4; k++) {
-				Vertex* vertex = quad->verts[k];
-				if (potentialCriticalPoint->scalar < vertex->scalar) {
-					relationships.insert(min);
-				}
-				else if (potentialCriticalPoint->scalar > vertex->scalar) {
-					relationships.insert(max);
-				}				
-			}
-		}
-		if (relationships.size() == 1) {
-			Vertex criticalPoint = *potentialCriticalPoint;
-			icVector3 vector = icVector3(criticalPoint.x, criticalPoint.y, criticalPoint.z);
-			if (*relationships.begin() == min) {
-				icVector3 color = icVector3(0.0, 0.0, 0.9);
-				criticalPoints.push_back(CriticalPoint(vector, color, criticalPoint.scalar, min));
-			}
-			else if (*relationships.begin() == max) {
-				icVector3 color = icVector3(0.9, 0.0, 0.0);
-				criticalPoints.push_back(CriticalPoint(vector, color, criticalPoint.scalar, max));
-			}
-		}
-	}
-
-	for (int i = 0; i < poly->nquads; i++) {
-		Quad* quad = poly->qlist[i];
-		Vertex* x2y2 = quad->verts[0];
-		Vertex* x1y2 = quad->verts[1];
-		Vertex* x1y1 = quad->verts[2];
-		Vertex* x2y1 = quad->verts[3];
-
-		double x1 = x1y2->x;
-		double x2 = x2y2->x;
-		double y1 = x1y1->y;
-		double y2 = x1y2->y;
-
-		double x1y1Scalar = x1y1->scalar;
-		double x1y2Scalar = x1y2->scalar;
-		double x2y1Scalar = x2y1->scalar;
-		double x2y2Scalar = x2y2->scalar;
-
-		double x0 = (x2 * x1y1Scalar - x1 * x2y1Scalar - x2 * x1y2Scalar + x1 * x2y2Scalar) / (x1y1Scalar - x2y1Scalar - x1y2Scalar + x2y2Scalar);
-		double y0 = (y2 * x1y1Scalar - y2 * x2y1Scalar - y1 * x1y2Scalar + y1 * x2y2Scalar) / (x1y1Scalar - x2y1Scalar - x1y2Scalar + x2y2Scalar);
-
-		if (x0-EPSILON > x1 && x0+EPSILON < x2 && y0-EPSILON > y1 && y0+EPSILON < y2) {
-			double zAverage = (x2y2->z + x1y2->z + x2y1->z + x2y2->z) / 4;
-			double linearlyInterpolatedScalar =
-				(((x2 - x0) / (x2 - x1)) * ((y2 - y0) / (y2 - y1)) * x1y1Scalar) +
-				(((x0 - x1) / (x2 - x1)) * ((y2 - y0) / (y2 - y1)) * x2y1Scalar) +
-				(((x2 - x0) / (x2 - x1)) * ((y0 - y1) / (y2 - y1)) * x1y2Scalar) +
-				(((x0 - x1) / (x2 - x1)) * ((y0 - y1) / (y2 - y1)) * x2y2Scalar);
-
-			icVector3 vector = icVector3(x0, y0, zAverage);
-			icVector3 color = icVector3(0.70, 0.70, 0.70);
-			criticalPoints.push_back(CriticalPoint(vector, color, linearlyInterpolatedScalar, saddle));
-		}
-	}
-	return criticalPoints;
-}
-
-void addCriticalPointContours(double threshold, icVector3 color) {
-	std::list<Polyline2> edges = marchingSquare(*poly, threshold);
-	std::vector<Polyline2> newPolylines = makePolylineFromEdges(edges);
-for (auto polyline : newPolylines) {
-	polyline.rgb = color;
-	polylines.push_back(polyline);
-}
-}
-
-void part3B(std::list<CriticalPoint> criticalPoints) {
-	for (CriticalPoint criticalPoint : criticalPoints) {
-		if (criticalPoint.relationship == saddle) {
-			addCriticalPointContours(criticalPoint.scalar, criticalPoint.color);
-		}
-	}
-}
-
-// Actual Project 3 Stuff
 void streamline(Polyline2& polyline, icVector3 seed, const double step) {
 	streamlineFB(polyline, seed, step);
 	Polyline2 lineBack;
@@ -417,33 +217,30 @@ bool isZero(double x) {
 }
 
 //not done
-icVector3 bilinear(icVector3 pt, Vertex v0, Vertex v1, Vertex v2, Vertex v3) {
-	double alpha0 = (pt.x - v0.x) / (v1.x - v0.x);
-	double alpha1 = (pt.x - v3.x) / (v2.x - v3.x);
-	double py = (1 - alpha0) * v0.y + (alpha0) * v1.y;
-	double qy = (1 - alpha1) * v3.y + (alpha0) * v2.y;
-	double beta = (pt.y - py) / (qy - py);
+//icVector3 bilinear(icVector3 pt, Vertex v0, Vertex v1, Vertex v2, Vertex v3) {
+//	double alpha0 = (pt.x - v0.x) / (v1.x - v0.x);
+//	double alpha1 = (pt.x - v3.x) / (v2.x - v3.x);
+//	double py = (1 - alpha0) * v0.y + (alpha0) * v1.y;
+//	double qy = (1 - alpha1) * v3.y + (alpha0) * v2.y;
+//	double beta = (pt.y - py) / (qy - py);
+//
+//	double vx = (1-alpha0) * (1-beta) * v0.vx + alpha0 * (1-beta) * v1.vx + alpha1 * beta * v2.vx + (1-alpha1) * beta * v3.vx;
+//	double vy = (1-alpha0) * (1-beta) * v0.vy + alpha0 * (1-beta) * v1.vy + alpha1 * beta * v2.vy + (1-alpha1) * beta * v3.vx;
+//
+//	return icVector3(vx, vy, 0);
+//}
 
-	double vx = (1-alpha0) * (1-beta) * v0.vx + alpha0 * (1-beta) * v1.vx + alpha1 * beta * v2.vx + (1-alpha1) * beta * v3.vx;
-	double vy = (1-alpha0) * (1-beta) * v0.vy + alpha0 * (1-beta) * v1.vy + alpha1 * beta * v2.vy + (1-alpha1) * beta * v3.vx;
-
-	return icVector3(vx, vy, 0);
-}
-
-// not done
-// get the vector from vector field by bilinear interpolation
+// maybe done
 icVector3 getVector(Quad* quad, const icVector3 p) {
-	//double x1 = quad->verts[2]->x;
-	//double x2 = quad->verts[0]->x;
-	//double y1 = quad->verts[2]->y;
-	//double y2 = quad->verts[0]->y;
-
-	//icVector3 v11(quad->verts[2]->vx, quad->verts[2]->vy, quad->verts[2]->vz);
-
 	Vertex* x2y2 = quad->verts[0];
 	Vertex* x1y2 = quad->verts[1];
 	Vertex* x1y1 = quad->verts[2];
 	Vertex* x2y1 = quad->verts[3];
+
+	double x1 = x1y2->x;
+	double x2 = x2y2->x;
+	double y1 = x1y1->y;
+	double y2 = x1y2->y;
 
 	double x1y1XVector = x1y1->vx;
 	double x1y1YVector = x1y1->vy;
@@ -454,13 +251,17 @@ icVector3 getVector(Quad* quad, const icVector3 p) {
 	double x2y2XVector = x2y2->vx;
 	double x2y2YVector = x2y2->vy;
 
-	//double newXVector = (x2 * x1y1Scalar - x1 * x2y1Scalar - x2 * x1y2Scalar + x1 * x2y2Scalar) / (x1y1Scalar - x2y1Scalar - x1y2Scalar + x2y2Scalar);
-	//double newYVector = (y2 * x1y1Scalar - y2 * x2y1Scalar - y1 * x1y2Scalar + y1 * x2y2Scalar) / (x1y1Scalar - x2y1Scalar - x1y2Scalar + x2y2Scalar);
-	double newXVector = 0.0;
-	double newYVector = 0.0;
-	double newZVector = 0.0;
+	double newXVector = (((x2 - p.x) / (x2 - x1)) * ((y2 - p.y) / (y2 - y1)) * x1y1XVector) +
+		(((p.x - x1) / (x2 - x1)) * ((y2 - p.y) / (y2 - y1)) * x2y1XVector) +
+		(((x2 - p.x) / (x2 - x1)) * ((p.y - y1) / (y2 - y1)) * x1y2XVector) +
+		(((p.x - x1) / (x2 - x1)) * ((p.y - y1) / (y2 - y1)) * x2y2XVector);
 
-	return icVector3(newXVector, newYVector, newZVector);
+	double newYVector = (((x2 - p.x) / (x2 - x1)) * ((y2 - p.y) / (y2 - y1)) * x1y1YVector) +
+		(((p.y - x1) / (x2 - x1)) * ((y2 - p.y) / (y2 - y1)) * x2y1YVector) +
+		(((x2 - p.y) / (x2 - x1)) * ((p.y - y1) / (y2 - y1)) * x1y2YVector) +
+		(((p.y - x1) / (x2 - x1)) * ((p.y - y1) / (y2 - y1)) * x2y2YVector);
+
+	return icVector3(newXVector, newYVector, 0.0);
 }
 
 void streamlineTrace(Quad* nextQuad, Quad* currentQuad, icVector3 currentPos, icVector3 currentVec, double t, const icVector3 min, const icVector3 max) {
@@ -524,12 +325,12 @@ bool quadraticRoot(double& r0, double& r1, double a, double b, double c) {
 	return true;
 }
 
-bool singRoot(double r0, double r1, double a, double b, double c, double d) {
-	double f0 = b - a - (c + d);
-	double f1 = (c + d);
-	double f2 = a;
-	return quadraticRoot(r0, r1, f0, f1, f2);
-}
+//bool singRoot(double r0, double r1, double a, double b, double c, double d) {
+//	double f0 = b - a - (c + d);
+//	double f1 = (c + d);
+//	double f2 = a;
+//	return quadraticRoot(r0, r1, f0, f1, f2);
+//}
 
 void extractSingularity() {
 	singularities.clear();
