@@ -184,6 +184,8 @@ void streamlineTrace(Quad* nextQuad, Quad* currentQuad, icVector3 currentPos, ic
 	bool insideQuad = false;
 	int i = 0;
 	while (!insideQuad) {
+		std::cout << "i: " << i << std::endl;
+		i++;
 		if ((currentPos.x < min.x || currentPos.x > max.x) || (currentPos.y < min.y || currentPos.y > max.y)) {
 			std::cout << "outside bounds, ending early" << std::endl;
 			nextQuad = nullptr; 
