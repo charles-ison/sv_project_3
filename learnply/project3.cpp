@@ -279,7 +279,6 @@ void extractSingularity() {
 		double c01 = a11 * b01 - a01 * b11;
 
 		if (c01 == 0.0) {
-			std::cout << "c01 is 0" << std::endl;
 			continue;
 		}
 
@@ -306,7 +305,6 @@ void extractSingularity() {
 				point.p = pt + posx1y1;
 				singularities.push_back(point);
 				double r0 = f_11 + pt.x * (f_21 - f_11) + pt.y * (f_12 - f_11) + pt.x * pt.y * (f_11 - f_21 - f_12 + f_22);
-				std::cout << r0 << std::endl;
 			}
 		}
 	}
@@ -482,13 +480,13 @@ void extractSeparatrix() {
 	}
 }
 
-void displaySingularities() {
+void displaySingularities(std::list<Singularity> singularities) {
 	CHECK_GL_ERROR();
 	for (Singularity sing : singularities) {
 		GLUquadric* quadric = gluNewQuadric();
 		glPushMatrix();
 		glTranslated(sing.p.x, sing.p.y, sing.p.z);
-		glColor3f(sing.p.x, sing.p.y, sing.p.z);
+		glColor3f(sing.rgb.x, sing.rgb.y, sing.rgb.z);
 		gluSphere(quadric, 0.1, 16, 16);
 		glPopMatrix();
 		gluDeleteQuadric(quadric);

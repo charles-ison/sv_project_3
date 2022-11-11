@@ -93,7 +93,7 @@ Main program.
 int main(int argc, char* argv[])
 {
 	/*load mesh from ply file*/
-	FILE* this_file = fopen("../data/vector_data/v3.ply", "r");
+	FILE* this_file = fopen("../data/vector_data/v4.ply", "r");
 	poly = new Polyhedron(this_file);
 	fclose(this_file);
 	
@@ -480,6 +480,13 @@ void keyboard(unsigned char key, int x, int y) {
 		glutPostRedisplay();
 		break;
 
+	case 'b':
+		display_mode = 1;
+		extractSingularity();
+		classifySingularity();
+		//extractSeparatrix();
+		glutPostRedisplay();
+
 	case 'r':	// reset rotation and transformation
 		mat_ident(rotmat);
 		translation[0] = 0;
@@ -832,6 +839,7 @@ void display(void)
 	display_selected_vertex(poly);
 	display_selected_quad(poly);
 	displayPolylines(polylines);
+	displaySingularities(singularities);
 
 	glFlush();
 	glutSwapBuffers();

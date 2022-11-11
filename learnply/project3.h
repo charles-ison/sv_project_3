@@ -20,16 +20,13 @@ void streamline(Polyline2& polyline, icVector3 seed, const double step);
 struct Singularity {
 	int type = -1;
 	icVector3 p;
-	icVector3 rgb = icVector3(0.0);
+	icVector3 rgb = icVector3(0.0, 1.0, 0.0);
 	icMatrix2x2 jacobi;
 };
 
-void displaySingularities();
+void displaySingularities(std::list<Singularity> singularities);
 void extractSingularity();
 void classifySingularity();
 void classifySingularityByWinding();
 void extractSeparatrix();
-
-void streamlineTrace(Quad*& nextQuad, Quad*& currentQuad, icVector3 currentPos, icVector3 currentVec, double t, const icVector3 min, const icVector3 max);
-
 
