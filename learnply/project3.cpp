@@ -49,16 +49,21 @@ void streamlineFB(Polyline2& polyline, icVector3 seed, const double step, bool f
 	if (!forward) {
 		coef = -1.0;
 	}
-	int i = 0;
 	while (quad != nullptr) {
-		std::cout << i << std::endl;
-		i++;
 		icVector3 currentVector = getVector(quad, currentPosition);
 		if (currentVector.length() < EPSILON) {
+			std::cout << "less than EPSILON" << std::endl;
 			break;
 		}
+		std::cout << "currentPosition.x: " << currentPosition.x << std::endl;
+		std::cout << "currentPosition.y: " << currentPosition.y << std::endl;
+		std::cout << "currentPosition.z: " << currentPosition.z << std::endl;
+		std::cout << "currentVector.x: " << currentVector.x << std::endl;
+		std::cout << "currentVector.y: " << currentVector.y << std::endl;
+		std::cout << "currentVector.z: " << currentVector.z << std::endl;
 		icVector3 nextPosition = currentPosition + step * currentVector * coef;
 		if (onBoundary(nextPosition, min, max)) {
+			std::cout << "on boundary" << std::endl;
 			polyline.vertices.push_back(nextPosition);
 			break;
 		}
@@ -67,6 +72,8 @@ void streamlineFB(Polyline2& polyline, icVector3 seed, const double step, bool f
 		quad = nextQuad;
 		currentPosition = nextPosition;
 		polyline.vertices.push_back(currentPosition);
+		std::cout << "quad == nullptr: " << (quad == nullptr) << std::endl;
+		std::cout << "at end and pushing back" << std::endl;
 	}
 }
 
@@ -166,6 +173,12 @@ icVector3 getVector(Quad* quad, const icVector3 p) {
 	double x2y2XVector = x2y2->vx;
 	double x2y2YVector = x2y2->vy;
 
+	std::cout << x1y1XVector << std::endl;
+	std::cout << x1y2XVector << std::endl;
+	std::cout << x2y1XVector << std::endl;
+	std::cout << x2y2XVector << std::endl;
+
+
 	double newXVector = (((x2 - p.x) / (x2 - x1)) * ((y2 - p.y) / (y2 - y1)) * x1y1XVector) +
 		(((p.x - x1) / (x2 - x1)) * ((y2 - p.y) / (y2 - y1)) * x2y1XVector) +
 		(((x2 - p.x) / (x2 - x1)) * ((p.y - y1) / (y2 - y1)) * x1y2XVector) +
@@ -179,7 +192,7 @@ icVector3 getVector(Quad* quad, const icVector3 p) {
 	return icVector3(newXVector, newYVector, 0.0);
 }
 
-void streamlineTrace(Quad* nextQuad, Quad* currentQuad, icVector3 currentPos, icVector3 currentVec, double t, const icVector3 min, const icVector3 max) {
+void streamlineTrace(Quad*& nextQuad, Quad*& currentQuad, icVector3 currentPos, icVector3 currentVec, double t, const icVector3 min, const icVector3 max) {
 
 	bool insideQuad = false;
 	int i = 0;
@@ -200,9 +213,11 @@ void streamlineTrace(Quad* nextQuad, Quad* currentQuad, icVector3 currentPos, ic
 			Vertex* v1 = edge->verts[1];
 			double temp;
 			if (std::abs(v0->x - v1->x) < EPSILON) {
+				std::cout << "inside x" << std::endl;
 				temp = (v0->x - currentPos.x) / currentVec.x;
 			}
 			else {
+				std::cout << "inside y" << std::endl;
 				temp = (v0->y - currentPos.y) / currentVec.y;
 			}
 			if (temp > 0 && temp < t_) {
@@ -223,6 +238,8 @@ void streamlineTrace(Quad* nextQuad, Quad* currentQuad, icVector3 currentPos, ic
 		}
 		else {
 			if (t_ >= t) {
+				std::cout << "t_: " << t_ << std::endl;
+				std::cout << "t: " << t << std::endl;
 				std::cout << "t_ >= t" << std::endl;
 				insideQuad = true;
 			} 

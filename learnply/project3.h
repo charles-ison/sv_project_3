@@ -30,6 +30,6 @@ void classifySingularity();
 void classifySingularityByWinding();
 void extractSeparatrix();
 
-void streamlineTrace(Quad* nextQuad, Quad* currentQuad, icVector3 currentPos, icVector3 currentVec, double t, const icVector3 min, const icVector3 max);
+void streamlineTrace(Quad*& nextQuad, Quad*& currentQuad, icVector3 currentPos, icVector3 currentVec, double t, const icVector3 min, const icVector3 max);
 
 
