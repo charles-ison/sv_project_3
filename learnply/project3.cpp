@@ -40,7 +40,6 @@ bool onBoundary(icVector3 nextPosition, icVector3 min, icVector3 max) {
 
 void streamlineFB(Polyline2& polyline, icVector3 seed, const double step, bool forward) {
 	polyline.vertices.push_back(seed);
-	std::cout << "first find quad" << std::endl;
 	Quad* quad = findQuad(seed);
 	icVector3 min, max;
 	findMinMaxField(min, max);
@@ -52,28 +51,19 @@ void streamlineFB(Polyline2& polyline, icVector3 seed, const double step, bool f
 	while (quad != nullptr) {
 		icVector3 currentVector = getVector(quad, currentPosition);
 		if (currentVector.length() < EPSILON) {
-			std::cout << "less than EPSILON" << std::endl;
 			break;
 		}
-		std::cout << "currentPosition.x: " << currentPosition.x << std::endl;
-		std::cout << "currentPosition.y: " << currentPosition.y << std::endl;
-		std::cout << "currentPosition.z: " << currentPosition.z << std::endl;
-		std::cout << "currentVector.x: " << currentVector.x << std::endl;
-		std::cout << "currentVector.y: " << currentVector.y << std::endl;
-		std::cout << "currentVector.z: " << currentVector.z << std::endl;
 		icVector3 nextPosition = currentPosition + step * currentVector * coef;
 		if (onBoundary(nextPosition, min, max)) {
-			std::cout << "on boundary" << std::endl;
 			polyline.vertices.push_back(nextPosition);
 			break;
 		}
 		Quad* nextQuad = nullptr;
-		streamlineTrace(nextQuad, quad, currentPosition, currentVector * coef, step, min, max);
+		//streamlineTrace(nextQuad, quad, currentPosition, currentVector * coef, step, min, max);
+		nextQuad = findQuad(nextPosition);
 		quad = nextQuad;
 		currentPosition = nextPosition;
 		polyline.vertices.push_back(currentPosition);
-		std::cout << "quad == nullptr: " << (quad == nullptr) << std::endl;
-		std::cout << "at end and pushing back" << std::endl;
 	}
 }
 
@@ -125,11 +115,9 @@ Quad* findQuad(const icVector3 p) {
 	for (int i = 0; i < poly->nquads; i++) {
 		Quad* tempQuad = poly->qlist[i];
 		if (insideQuad(tempQuad, p)) {
-			std::cout << "inside FindQuad return tempQuad" << std::endl;
 			return tempQuad;
 		}
 	}
-	std::cout << "inside FindQuad return nullptr" << std::endl;
 	return nullptr;
 }
 
@@ -173,12 +161,6 @@ icVector3 getVector(Quad* quad, const icVector3 p) {
 	double x2y2XVector = x2y2->vx;
 	double x2y2YVector = x2y2->vy;
 
-	std::cout << x1y1XVector << std::endl;
-	std::cout << x1y2XVector << std::endl;
-	std::cout << x2y1XVector << std::endl;
-	std::cout << x2y2XVector << std::endl;
-
-
 	double newXVector = (((x2 - p.x) / (x2 - x1)) * ((y2 - p.y) / (y2 - y1)) * x1y1XVector) +
 		(((p.x - x1) / (x2 - x1)) * ((y2 - p.y) / (y2 - y1)) * x2y1XVector) +
 		(((x2 - p.x) / (x2 - x1)) * ((p.y - y1) / (y2 - y1)) * x1y2XVector) +
@@ -192,15 +174,12 @@ icVector3 getVector(Quad* quad, const icVector3 p) {
 	return icVector3(newXVector, newYVector, 0.0);
 }
 
+/*
 void streamlineTrace(Quad*& nextQuad, Quad*& currentQuad, icVector3 currentPos, icVector3 currentVec, double t, const icVector3 min, const icVector3 max) {
 
 	bool insideQuad = false;
-	int i = 0;
 	while (!insideQuad) {
-		std::cout << "i: " << i << std::endl;
-		i++;
 		if ((currentPos.x < min.x || currentPos.x > max.x) || (currentPos.y < min.y || currentPos.y > max.y)) {
-			std::cout << "outside bounds, ending early" << std::endl;
 			nextQuad = nullptr; 
 			return;
 		}
@@ -213,11 +192,9 @@ void streamlineTrace(Quad*& nextQuad, Quad*& currentQuad, icVector3 currentPos, 
 			Vertex* v1 = edge->verts[1];
 			double temp;
 			if (std::abs(v0->x - v1->x) < EPSILON) {
-				std::cout << "inside x" << std::endl;
 				temp = (v0->x - currentPos.x) / currentVec.x;
 			}
 			else {
-				std::cout << "inside y" << std::endl;
 				temp = (v0->y - currentPos.y) / currentVec.y;
 			}
 			if (temp > 0 && temp < t_) {
@@ -232,28 +209,23 @@ void streamlineTrace(Quad*& nextQuad, Quad*& currentQuad, icVector3 currentPos, 
 		}
 		if (nextQuad_ == nullptr) {
 			currentPos = currentPos + currentVec * t;
-			std::cout << "second find quad" << std::endl;
 			nextQuad = findQuad(currentPos);
 			return;
 		}
 		else {
 			if (t_ >= t) {
-				std::cout << "t_: " << t_ << std::endl;
-				std::cout << "t: " << t << std::endl;
-				std::cout << "t_ >= t" << std::endl;
 				insideQuad = true;
 			} 
 			else {
-				std::cout << "t_ < t" << std::endl;
 				currentQuad = nextQuad_;
 				t = t - t_;
 				currentPos = currentPos + currentVec * t_;
 			}
 		}
 	}
-	std::cout << "do we reach here?" << std::endl;
 	nextQuad = currentQuad;
 }
+*/
 
 bool quadraticRoot(double& r0, double& r1, double a, double b, double c) {
 	double m = b * b - 4 * a * c;
