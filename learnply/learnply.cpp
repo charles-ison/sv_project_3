@@ -93,7 +93,7 @@ Main program.
 int main(int argc, char* argv[])
 {
 	/*load mesh from ply file*/
-	FILE* this_file = fopen("../data/vector_data/v3.ply", "r");
+	FILE* this_file = fopen("../data/vector_data/v6.ply", "r");
 	poly = new Polyhedron(this_file);
 	fclose(this_file);
 	
@@ -484,7 +484,8 @@ void keyboard(unsigned char key, int x, int y) {
 		display_mode = 1;
 		extractSingularity();
 		classifySingularity();
-		//extractSeparatrix();
+		//classifySingularityByWinding();
+		extractSeparatrix();
 		glutPostRedisplay();
 
 	case 'r':	// reset rotation and transformation

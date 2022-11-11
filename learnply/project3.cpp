@@ -13,7 +13,7 @@
 
 #define EPSILON 0.001
 #define MIN_K 0.05
-#define STEP 0.001
+#define STEP 0.005
 
 extern Polyhedron* poly;
 extern std::vector<Polyline2> polylines;
@@ -310,8 +310,9 @@ void extractSingularity() {
 	}
 }
 
+// not using this code, just another option
 void classifySingularityByWinding() {
-	for (Singularity s : singularities) {
+	for (Singularity& s : singularities) {
 		icVector3 posn = s.p;
 		Quad* quad = findQuad(posn);
 		double winding_angle = 0;
@@ -434,7 +435,7 @@ void classifySingularity() {
 }
 
 void extractSeparatrix() {
-	for (Singularity s : singularities) {
+	for (Singularity& s : singularities) {
 		// Saddle
 		if (s.type == 2) {
 			double a = s.jacobi.entry[0][0];
