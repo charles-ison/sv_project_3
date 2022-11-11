@@ -20,7 +20,7 @@ void streamline(Polyline2& polyline, icVector3 seed, const double step);
 struct Singularity {
 	int type = -1;
 	icVector3 p;
-	icVector3 rgb = icVector3(0.0, 1.0, 0.0);
+	icVector3 rgb = icVector3(0.0);
 	icMatrix2x2 jacobi;
 };
 

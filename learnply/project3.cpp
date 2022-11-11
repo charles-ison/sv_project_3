@@ -354,7 +354,7 @@ void classifySingularityByWinding() {
 }
 
 void classifySingularity() {
-	for (Singularity s : singularities) {
+	for (Singularity& s : singularities) {
 		icVector3 posn = s.p;
 		Quad* quad = findQuad(posn);
 
@@ -395,16 +395,21 @@ void classifySingularity() {
 		if (delta >= 0) {
 			double r1 = 0.5 * (tr + sqrt(delta));
 			double r2 = 0.5 * (tr - sqrt(delta));
+			// unknown
 			if (r1 == 0 && r2 == 0) {
 				s.type = -1;
 			}
+			// source
 			else if (r1 >= 0 && r2 >= 0) {
 				s.type = 0;
+				s.rgb = icVector3(1.0, 0.0, 0.0);
 			}
+			// sink
 			else if (r1 <= 0 && r2 <= 0) {
 				s.type = 1;
 				s.rgb = icVector3(0.0, 0.0, 1.0);
 			} 
+			//saddle
 			if (r1 > 0 && r2 < 0 || r1 < 0 && r2 > 0) {
 				s.type = 2;
 				s.rgb = icVector3(0.0, 1.0, 0.0);
@@ -414,10 +419,12 @@ void classifySingularity() {
 			}
 		}
 		else {
+			// center
 			if (tr == 0) {
 				s.type = 3;
 				s.rgb = icVector3(0.0, 1.0, 1.0);
 			}
+			// forus
 			else {
 				s.type = 4;
 				s.rgb = icVector3(1.0, 1.0, 0.0);
@@ -487,7 +494,7 @@ void displaySingularities(std::list<Singularity> singularities) {
 		glPushMatrix();
 		glTranslated(sing.p.x, sing.p.y, sing.p.z);
 		glColor3f(sing.rgb.x, sing.rgb.y, sing.rgb.z);
-		gluSphere(quadric, 0.1, 16, 16);
+		gluSphere(quadric, 0.05, 16, 16);
 		glPopMatrix();
 		gluDeleteQuadric(quadric);
 	}
