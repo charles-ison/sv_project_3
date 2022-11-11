@@ -140,7 +140,6 @@ bool isZero(double x) {
 //	return icVector3(vx, vy, 0);
 //}
 
-// maybe done
 icVector3 getVector(Quad* quad, const icVector3 p) {
 	Vertex* x2y2 = quad->verts[0];
 	Vertex* x1y2 = quad->verts[1];
@@ -167,9 +166,9 @@ icVector3 getVector(Quad* quad, const icVector3 p) {
 		(((p.x - x1) / (x2 - x1)) * ((p.y - y1) / (y2 - y1)) * x2y2XVector);
 
 	double newYVector = (((x2 - p.x) / (x2 - x1)) * ((y2 - p.y) / (y2 - y1)) * x1y1YVector) +
-		(((p.y - x1) / (x2 - x1)) * ((y2 - p.y) / (y2 - y1)) * x2y1YVector) +
-		(((x2 - p.y) / (x2 - x1)) * ((p.y - y1) / (y2 - y1)) * x1y2YVector) +
-		(((p.y - x1) / (x2 - x1)) * ((p.y - y1) / (y2 - y1)) * x2y2YVector);
+		(((p.x - x1) / (x2 - x1)) * ((y2 - p.y) / (y2 - y1)) * x2y1YVector) +
+		(((x2 - p.x) / (x2 - x1)) * ((p.y - y1) / (y2 - y1)) * x1y2YVector) +
+		(((p.x - x1) / (x2 - x1)) * ((p.y - y1) / (y2 - y1)) * x2y2YVector);
 
 	return icVector3(newXVector, newYVector, 0.0);
 }

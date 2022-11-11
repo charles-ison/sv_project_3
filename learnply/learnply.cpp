@@ -93,7 +93,7 @@ Main program.
 int main(int argc, char* argv[])
 {
 	/*load mesh from ply file*/
-	FILE* this_file = fopen("../data/vector_data/v1.ply", "r");
+	FILE* this_file = fopen("../data/vector_data/v3.ply", "r");
 	poly = new Polyhedron(this_file);
 	fclose(this_file);
 	
@@ -472,7 +472,7 @@ void keyboard(unsigned char key, int x, int y) {
 			Polyline2 polyline;
 			for (int i = -10; i < 10; i++) {
 				polyline.vertices.clear();
-				streamline(polyline, icVector3(i * 1.0, 0, 0), 0.001);
+				streamline(polyline, icVector3(i * 1.0, 0, 0), 0.005);
 				polyline.rgb = icVector3(0.0, 1.0, 0.0);
 				polylines.push_back(polyline);
 			}
