@@ -18,6 +18,7 @@
 #include "polyline2.h"
 #include "drawUtil.h"
 #include "iostream"
+#include "ppm.h"
 
 Polyhedron* poly;
 std::vector<PolyLine> lines;
@@ -54,9 +55,9 @@ int mouse_mode = -2;	// -1 = no action, 1 = tranlate y, 2 = rotate
 
 // IBFV related variables (Van Wijk 2002)
 //https://www.win.tue.nl/~vanwijk/ibfv/
-#define NPN		64
+#define NPN		256
 #define SCALE	4.0
-#define ALPHA	8
+#define ALPHA	(255*0.2)
 float tmax = win_width / (SCALE * NPN);
 float dmax = SCALE / win_width;
 unsigned char* pixels;
@@ -270,6 +271,31 @@ void initIBFV()
 	glNewList(1, GL_COMPILE);
 	glTexImage2D(GL_TEXTURE_2D, 0, 4, NPN, NPN, 0, GL_RGBA, GL_UNSIGNED_BYTE, pat);
 	glEndList();
+}
+
+void makePatternsImg(const std::string& fname) {
+	ppm img(fname);
+	GLubyte pat[NPN][NPN][4];
+	int i, j;
+	for (i = 0; i < NPN; i++) {
+		for (j = 0; j < NPN; j++) {
+			pat[i][j][0] = img.r[(NPN - i - 1) * NPN + j];
+			pat[i][j][1] = img.g[(NPN - i - 1) * NPN + j];
+			pat[i][j][2] = img.b[(NPN - i - 1) * NPN + j];
+			pat[i][j][3] = ALPHA;
+		}
+	}
+	glNewList(1, GL_COMPILE);
+	glTexImage2D(GL_TEXTURE_2D, 0, 4, NPN, NPN, 0, GL_RGBA, GL_UNSIGNED_BYTE, pat);
+	glEndList();
+}
+
+void makePatternsImgNoise(const std::string& fname, float w) {
+
+}
+
+void makePatternsImgEdges(const std::string& fname) {
+
 }
 
 /******************************************************************************
@@ -487,6 +513,19 @@ void keyboard(unsigned char key, int x, int y) {
 		//classifySingularityByWinding();
 		extractSeparatrix();
 		glutPostRedisplay();
+		break;
+
+	case 'c':
+		display_mode = 5;
+		initIBFV();
+		glutPostRedisplay();
+		break;
+
+	case 'd':
+		display_mode = 5;
+		makePatternsImg("../data/images/Lenna.ppm");
+		glutPostRedisplay();
+		break;
 
 	case 'r':	// reset rotation and transformation
 		mat_ident(rotmat);
@@ -755,6 +794,7 @@ void displayIBFV()
 			float px = tx + dx;
 			float py = ty + dy;
 
+			//TODO: change to tx and ty to make still
 			glTexCoord2f(px, py);
 			glVertex3d(vtemp->x, vtemp->y, vtemp->z);
 		}

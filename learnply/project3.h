@@ -2,6 +2,7 @@
 
 #include <list>
 #include <vector>
+#include <string>
 #include "polyline2.h"
 #include "polyhedron.h"
 #include "icMatrix.H"
