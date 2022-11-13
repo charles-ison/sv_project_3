@@ -733,6 +733,7 @@ void mouse(int button, int state, int x, int y) {
 				glMatrixMode(GL_MODELVIEW);
 
 				hits = glRenderMode(GL_RENDER);
+				//TODO: add code to call streamline() here
 				poly->selected_quad = processHits(hits, selectBuf);
 				printf("Selected quad id = %d\n", poly->selected_quad);
 				glutPostRedisplay();
