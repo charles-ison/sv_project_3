@@ -472,6 +472,10 @@ void display_selected_quad(Polyhedron* this_poly)
 
 	Quad* temp_q = this_poly->qlist[this_poly->selected_quad];
 
+	Polyline2 polyline;
+	streamline(polyline, icVector3(temp_q->verts[2]->x, temp_q->verts[2]->y, temp_q->verts[2]->z), 0.005);
+	polylines.push_back(polyline);
+
 	glBegin(GL_POLYGON);
 	for (j = 0; j < 4; j++) {
 		Vertex* temp_v = temp_q->verts[j];
@@ -494,6 +498,9 @@ void display_selected_vertex(Polyhedron* this_poly)
 
 	Vertex* temp_v = this_poly->vlist[this_poly->selected_vertex];
 	drawDot(temp_v->x, temp_v->y, temp_v->z, 0.15, 1.0, 0.0, 0.0);
+	Polyline2 polyline;
+	streamline(polyline, icVector3(temp_v->x, temp_v->y, temp_v->z), 0.005);
+	polylines.push_back(polyline);
 
 	CHECK_GL_ERROR();
 }
@@ -733,7 +740,7 @@ void mouse(int button, int state, int x, int y) {
 				glMatrixMode(GL_MODELVIEW);
 
 				hits = glRenderMode(GL_RENDER);
-				//TODO: add code to call streamline() here
+
 				poly->selected_quad = processHits(hits, selectBuf);
 				printf("Selected quad id = %d\n", poly->selected_quad);
 				glutPostRedisplay();
