@@ -58,6 +58,7 @@ int mouse_mode = -2;	// -1 = no action, 1 = tranlate y, 2 = rotate
 #define NPN		256
 #define SCALE	4.0
 #define ALPHA	(255*0.2)
+bool still_image = true;
 float tmax = win_width / (SCALE * NPN);
 float dmax = SCALE / win_width;
 unsigned char* pixels;
@@ -511,18 +512,31 @@ void keyboard(unsigned char key, int x, int y) {
 		extractSingularity();
 		classifySingularity();
 		//classifySingularityByWinding();
-		extractSeparatrix();
 		glutPostRedisplay();
 		break;
 
 	case 'c':
-		display_mode = 5;
-		initIBFV();
+		display_mode = 1;
+		extractSeparatrix();
 		glutPostRedisplay();
 		break;
 
 	case 'd':
 		display_mode = 5;
+		initIBFV();
+		glutPostRedisplay();
+		break;
+
+	case 'e':
+		display_mode = 5;
+		still_image = true;
+		makePatternsImg("../data/images/Lenna.ppm");
+		glutPostRedisplay();
+		break;
+
+	case 'f':
+		display_mode = 5;
+		still_image = false;
 		makePatternsImg("../data/images/Lenna.ppm");
 		glutPostRedisplay();
 		break;
@@ -794,8 +808,12 @@ void displayIBFV()
 			float px = tx + dx;
 			float py = ty + dy;
 
-			//TODO: change to tx and ty to make still
-			glTexCoord2f(px, py);
+			if (still_image) {
+				glTexCoord2f(tx, ty);
+			}
+			else {
+				glTexCoord2f(px, py);
+			}
 			glVertex3d(vtemp->x, vtemp->y, vtemp->z);
 		}
 		glEnd();
