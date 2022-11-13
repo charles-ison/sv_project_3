@@ -1099,6 +1099,7 @@ void display_polyhedron(Polyhedron* poly)
 	case 5:	// IBFV vector field display
 	{
 		displayIBFV();
+		
 		glutPostRedisplay();
 	}
 	break;

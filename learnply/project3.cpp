@@ -1,3 +1,4 @@
+#pragma once
 #define _USE_MATH_DEFINES
 
 #include "glError.h"
@@ -126,20 +127,6 @@ bool isZero(double x) {
 	return std::abs(x) < e;
 }
 
-//not done
-//icVector3 bilinear(icVector3 pt, Vertex v0, Vertex v1, Vertex v2, Vertex v3) {
-//	double alpha0 = (pt.x - v0.x) / (v1.x - v0.x);
-//	double alpha1 = (pt.x - v3.x) / (v2.x - v3.x);
-//	double py = (1 - alpha0) * v0.y + (alpha0) * v1.y;
-//	double qy = (1 - alpha1) * v3.y + (alpha0) * v2.y;
-//	double beta = (pt.y - py) / (qy - py);
-//
-//	double vx = (1-alpha0) * (1-beta) * v0.vx + alpha0 * (1-beta) * v1.vx + alpha1 * beta * v2.vx + (1-alpha1) * beta * v3.vx;
-//	double vy = (1-alpha0) * (1-beta) * v0.vy + alpha0 * (1-beta) * v1.vy + alpha1 * beta * v2.vy + (1-alpha1) * beta * v3.vx;
-//
-//	return icVector3(vx, vy, 0);
-//}
-
 icVector3 getVector(Quad* quad, const icVector3 p) {
 	Vertex* x2y2 = quad->verts[0];
 	Vertex* x1y2 = quad->verts[1];
@@ -235,13 +222,6 @@ bool quadraticRoot(double& r0, double& r1, double a, double b, double c) {
 	r1 = (-b + std::sqrt(m)) / (2 * a);
 	return true;
 }
-
-//bool singRoot(double r0, double r1, double a, double b, double c, double d) {
-//	double f0 = b - a - (c + d);
-//	double f1 = (c + d);
-//	double f2 = a;
-//	return quadraticRoot(r0, r1, f0, f1, f2);
-//}
 
 void extractSingularity() {
 	singularities.clear();
@@ -490,6 +470,7 @@ void extractSeparatrix() {
 
 void displaySingularities(std::list<Singularity> singularities) {
 	CHECK_GL_ERROR();
+	glMatrixMode(GL_MODELVIEW);
 	for (Singularity sing : singularities) {
 		GLUquadric* quadric = gluNewQuadric();
 		glPushMatrix();
