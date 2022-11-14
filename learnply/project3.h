@@ -7,8 +7,6 @@
 #include "polyhedron.h"
 #include "icMatrix.H"
 
-bool isZero(double x);
-
 void findMinMaxField(icVector3& min, icVector3& max);
 icVector3 getVector(Quad* quad, const icVector3 p);
 

@@ -68,7 +68,6 @@ void streamlineFB(Polyline2& polyline, icVector3 seed, const double step, bool f
 	}
 }
 
-// maybe done?
 void findMinMaxField(icVector3& min, icVector3& max) {
 	min.x = poly->vlist[0]->x;
 	min.y = poly->vlist[0]->y;
@@ -122,11 +121,6 @@ Quad* findQuad(const icVector3 p) {
 	return nullptr;
 }
 
-bool isZero(double x) {
-	double e = std::numeric_limits<double>::epsilon();
-	return std::abs(x) < e;
-}
-
 icVector3 getVector(Quad* quad, const icVector3 p) {
 	Vertex* x2y2 = quad->verts[0];
 	Vertex* x1y2 = quad->verts[1];
@@ -160,6 +154,7 @@ icVector3 getVector(Quad* quad, const icVector3 p) {
 	return icVector3(newXVector, newYVector, 0.0);
 }
 
+// Not using and instead using the brute force approach
 /*
 void streamlineTrace(Quad*& nextQuad, Quad*& currentQuad, icVector3 currentPos, icVector3 currentVec, double t, const icVector3 min, const icVector3 max) {
 
@@ -290,7 +285,7 @@ void extractSingularity() {
 	}
 }
 
-// not using this code, just another option
+// not using this code, just another option for classification
 void classifySingularityByWinding() {
 	for (Singularity& s : singularities) {
 		icVector3 posn = s.p;

@@ -95,7 +95,7 @@ Main program.
 int main(int argc, char* argv[])
 {
 	/*load mesh from ply file*/
-	FILE* this_file = fopen("../data/vector_data/v10.ply", "r");
+	FILE* this_file = fopen("../data/vector_data/v9.ply", "r");
 	poly = new Polyhedron(this_file);
 	fclose(this_file);
 	
@@ -567,28 +567,28 @@ void keyboard(unsigned char key, int x, int y) {
 	case 'a': 
 		display_mode = 5;
 		still_image = true;
-		makePatternsImg("../data/images/mountains3.ppm");
+		makePatternsImg("../data/images/mountains1.ppm");
 		glutPostRedisplay();
 		break;
 
 	case 'b':
 		display_mode = 5;
 		still_image = false;
-		makePatternsImg("../data/images/mountains3.ppm");
+		makePatternsImg("../data/images/mountains1.ppm");
 		glutPostRedisplay();
 		break;
 
 	case 'c':
 		display_mode = 5;
 		still_image = true;
-		makePatternsImgEdges("../data/images/mountains3.ppm");
+		makePatternsImgEdges("../data/images/mountains1.ppm");
 		glutPostRedisplay();
 		break;
 
 	case 'd':
 		display_mode = 5;
 		still_image = false;
-		makePatternsImgEdges("../data/images/mountains3.ppm");
+		makePatternsImgEdges("../data/images/mountains1.ppm");
 		glutPostRedisplay();
 		break;
 
