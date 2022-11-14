@@ -95,7 +95,7 @@ Main program.
 int main(int argc, char* argv[])
 {
 	/*load mesh from ply file*/
-	FILE* this_file = fopen("../data/vector_data/v6.ply", "r");
+	FILE* this_file = fopen("../data/vector_data/v3.ply", "r");
 	poly = new Polyhedron(this_file);
 	fclose(this_file);
 	
@@ -565,6 +565,50 @@ void keyboard(unsigned char key, int x, int y) {
 		break;
 
 	case 'a': 
+		display_mode = 5;
+		still_image = true;
+		makePatternsImg("../data/images/mountains1.ppm");
+		glutPostRedisplay();
+		break;
+
+	case 'b':
+		display_mode = 5;
+		still_image = false;
+		makePatternsImg("../data/images/mountains1.ppm");
+		glutPostRedisplay();
+		break;
+
+	case 'c':
+		display_mode = 5;
+		still_image = true;
+		makePatternsImgEdges("../data/images/mountains3.ppm");
+		glutPostRedisplay();
+		break;
+
+	case 'd':
+		display_mode = 5;
+		still_image = false;
+		makePatternsImgEdges("../data/images/mountains3.ppm");
+		glutPostRedisplay();
+		break;
+
+	case 'e':
+		display_mode = 1;
+		extractSingularity();
+		classifySingularity();
+		//alternative way to classify singularities is classifySingularityByWinding();
+		glutPostRedisplay();
+		break;
+
+	case 'f':
+		display_mode = 5;
+		initIBFV();
+		extractSingularity();
+		classifySingularity();
+		glutPostRedisplay();
+		break;
+
+	case 'g':
 		display_mode = 1;
 		{
 			Polyline2 polyline;
@@ -574,48 +618,26 @@ void keyboard(unsigned char key, int x, int y) {
 				polyline.rgb = icVector3(0.0, 1.0, 0.0);
 				polylines.push_back(polyline);
 			}
+			extractSingularity();
+			classifySingularity();
 		}
 		glutPostRedisplay();
 		break;
 
-	case 'b':
+	case 'h':
 		display_mode = 1;
-		extractSingularity();
-		classifySingularity();
-		//classifySingularityByWinding();
-		glutPostRedisplay();
-		break;
-
-	case 'c':
-		display_mode = 1;
-		extractSeparatrix();
-		glutPostRedisplay();
-		break;
-
-	case 'd':
-		display_mode = 5;
-		initIBFV();
-		glutPostRedisplay();
-		break;
-
-	case 'e':
-		display_mode = 5;
-		still_image = true;
-		makePatternsImg("../data/images/mountains3.ppm");
-		glutPostRedisplay();
-		break;
-
-	case 'f':
-		display_mode = 5;
-		still_image = false;
-		makePatternsImg("../data/images/mountains3.ppm");
-		glutPostRedisplay();
-		break;
-
-	case 'g':
-		display_mode = 5;
-		still_image = true;
-		makePatternsImgEdges("../data/images/mountains3.ppm");
+		{
+			Polyline2 polyline;
+			for (int i = -10; i < 10; i++) {
+				polyline.vertices.clear();
+				streamline(polyline, icVector3(i * 1.0, 0, 0), 0.005);
+				polyline.rgb = icVector3(0.0, 1.0, 0.0);
+				polylines.push_back(polyline);
+			}
+			extractSingularity();
+			classifySingularity();
+			extractSeparatrix();
+		}
 		glutPostRedisplay();
 		break;
 
