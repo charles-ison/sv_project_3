@@ -179,52 +179,67 @@ GitHub Link (for README markdown formatting): https://github.com/charles-ison/sv
 3.b.)
 
 * V1
+* One strength of the streamline here is I feel it more clearly makes the flow of the vector field around singularity more clear. A weakness of the streamlines here versus IBFV is since we are manually generating them iteratively, it is harder to see what is happening in all areas of the field as they streamlines tend to cluster. One other weakness is the streamlines tend to get more faint toward singularities, I am not clear at this moment why this occurs.
 ![image](v1_3b.png)
 
 * V3
+* Same strengths and weaknesses mentioned earlier, but this time almost half the screen does not contain any information about the vector fields topology due to the previously mentioned weakness.
 ![image](v3_3b.png)
 
 * V4
+* Same strengths and weaknesses mentioned earlier, but this time more than half the screen does not contain any information about the vector fields topology due to the previously mentioned weakness.
 ![image](v4_3b.png)
 
 * V5
+* Same strengths and weaknesses mentioned earlier, but this time almost half the screen does not contain any information about the vector fields topology due to the previously mentioned weakness.
 ![image](v5_3b.png)
 
 * V6
+* Same strengths and weaknesses mentioned earlier, but this time almost half the screen does not contain any information about the vector fields topology due to the previously mentioned weakness.
 ![image](v6_3b.png)
 
 * V8
+* Same strengths and weaknesses mentioned earlier, but this time most of the screen is conveying information about the topology, so the previous weakness is not as bad.
 ![image](v8_3b.png)
 
 * V9
+* Same strengths and weaknesses mentioned earlier, but this time more than half the screen does not contain any information about the vector fields topology due to the previously mentioned weakness. Also, there are very few streamlines near the singularities, so there is very little information given to know their existance or classification just based on the streamlines.
 ![image](v9_3b.png)
 
 * V10
+* Same strengths and weaknesses mentioned earlier, but this time almost half the screen does not contain any information about the vector fields topology due to the previously mentioned weakness. Unlike V9, there are more streamlines around the singularities, but still not as much information is conveyed as the IBFV algorithm. 
 ![image](v10_3b.png)
-
 
 3.c.)
 
 * V1
+* No separatrices are found, so the visualization is essentionall the same as part 3.b.
 ![image](v1_3c.png)
 
 * V3
+* Two eparatrices are found and help give further evidence that the singularitiy is a saddle. The visualization provides more overall info about the singularities than part 3.b.
 ![image](v3_3c.png)
 
 * V4
+* Two eparatrices are found and help give further evidence that the singularitiy is a saddle. The visualization provides more overall info about the singularities than part 3.b.
 ![image](v4_3c.png)
 
 * V5
+* No separatrices are found, so the visualization is essentionall the same as part 3.b.
 ![image](v5_3c.png)
 
 * V6
+* Two separatrices are found and gives further evidence to suppor the saddle and focus singularity classifications. The visualization provides more overall info about the singularities than part 3.b.
 ![image](v6_3c.png)
 
 * V8
+* Two separatrices are found and gives further evidence to suppor the saddle and focus singularity classifications. The visualization provides more overall info about the singularities than part 3.b.
 ![image](v8_3c.png)
 
 * V9
+* Many separatrices are found and give much more information about the singurities than what we were able to visualize just using streamlines. Many of the seven singularities were borderline impossible to confirm their existance and classify using just the streamlines, but now all but one out of the seven seem to be correctly classified. The lower focus still does not have enough information to tell 100%.
 ![image](v9_3c.png)
 
 * V10
+* No separatrices are found, so the visualization is essentionall the same as part 3.b.
 ![image](v10_3c.png)
