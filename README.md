@@ -124,3 +124,82 @@ Will write some things here.
 
 * V10
 ![image](v10_2b.png)
+
+3.a.)
+
+* V1
+![image](v1_3a.png)
+
+* V3
+![image](v3_3a.png)
+
+* V4
+![image](v4_3a.png)
+
+* V5
+![image](v5_3a.png)
+
+* V6
+![image](v6_3a.png)
+
+* V8
+![image](v8_3a.png)
+
+* V9
+![image](v9_3a.png)
+
+* V10
+![image](v10_3a.png)
+
+3.b.)
+
+* V1
+![image](v1_3b.png)
+
+* V3
+![image](v3_3b.png)
+
+* V4
+![image](v4_3b.png)
+
+* V5
+![image](v5_3b.png)
+
+* V6
+![image](v6_3b.png)
+
+* V8
+![image](v8_3b.png)
+
+* V9
+![image](v9_3b.png)
+
+* V10
+![image](v10_3b.png)
+
+
+3.c.)
+
+* V1
+![image](v1_3c.png)
+
+* V3
+![image](v3_3c.png)
+
+* V4
+![image](v4_3c.png)
+
+* V5
+![image](v5_3c.png)
+
+* V6
+![image](v6_3c.png)
+
+* V8
+![image](v8_3c.png)
+
+* V9
+![image](v9_3c.png)
+
+* V10
+![image](v10_3c.png)
