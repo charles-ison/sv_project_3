@@ -27,9 +27,11 @@ GitHub Link (for README markdown formatting): https://github.com/charles-ison/sv
 
 ### Question Answers
 
-1.a.) 
+1.a.)
 
-* Avalanche Lake - Glacier National Park 
+Will write some things here.
+
+* Avalanche Lake - Glacier National Park
 ![image](mountains1_part1a.png)
 
 * Driving - Grand Teton National Park
@@ -37,10 +39,10 @@ GitHub Link (for README markdown formatting): https://github.com/charles-ison/sv
 
 * Cracker Lake - Glacier National Park
 ![image](mountains3_part1a.png)
- 
-1.b.) 
 
-* Avalanche Lake - Glacier National Park 
+1.b.)
+
+* Avalanche Lake - Glacier National Park
 ![image](mountains1_part1b.png)
 
 * Driving - Grand Teton National Park
@@ -48,10 +50,10 @@ GitHub Link (for README markdown formatting): https://github.com/charles-ison/sv
 
 * Cracker Lake - Glacier National Park
 ![image](mountains3_part1b.png)
- 
-1.c.) 
 
-* Avalanche Lake - Glacier National Park 
+1.c.)
+
+* Avalanche Lake - Glacier National Park
 ![image](mountains1_part1c.png)
 
 * Driving - Grand Teton National Park
@@ -59,10 +61,10 @@ GitHub Link (for README markdown formatting): https://github.com/charles-ison/sv
 
 * Cracker Lake - Glacier National Park
 ![image](mountains3_part1c.png)
- 
-1.d.) 
 
-* Avalanche Lake - Glacier National Park 
+1.d.)
+
+* Avalanche Lake - Glacier National Park
 ![image](mountains1_part1d.png)
 
 * Driving - Grand Teton National Park
@@ -122,4 +124,3 @@ GitHub Link (for README markdown formatting): https://github.com/charles-ison/sv
 
 * V10
 ![image](v10_2b.png)
-
