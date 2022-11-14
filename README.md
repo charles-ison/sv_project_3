@@ -30,18 +30,18 @@ GitHub Link (for README markdown formatting): https://github.com/charles-ison/sv
 1.a.) When we use the image as the initial noise into the IBFV algorithm, the algorithm seems to smear to image in the directions the vector field is going. It creates a almost dreamy effect where the image starts to feel surreal. The impact can vary a lot depending on both the vector field and the image, but for the vector field visualized below (V10), I liked how it caused the image to almost spiral inward framing the mountains in each images.
 
 * Avalanche Lake - Glacier National Park
-* Bends the trees that frame the mountain image, almost feels like a Salvador Dali painting to me.
 ![image](mountains1_part1a.png)
+* Bends the trees that frame the mountain image, almost feels like a Salvador Dali painting to me.
 ![image](mountains1_part1b.png)
 
 * Driving - Grand Teton National Park
-* Makes it seem a bit like you are driving along the road towards the mountains at warp speed.
 ![image](mountains2_part1a.png)
+* Makes it seem a bit like you are driving along the road towards the mountains at warp speed.
 ![image](mountains2_part1b.png)
 
 * Cracker Lake - Glacier National Park
-* There are already patterns and lines in the rock face that blend in with the vector field. It is not immediately clear which parts of the rock face are natural or caused by the vector field.
 ![image](mountains3_part1a.png)
+* There are already patterns and lines in the rock face that blend in with the vector field. It is not immediately clear which parts of the rock face are natural or caused by the vector field.
 ![image](mountains3_part1b.png)
 
 1.b.) I personally like the V10 vector field the most for each of the three mountain lakes. First, I felt like the V10 vector fields creates a more dramatic change to the image than many of the other vector fields and I just enjoy the way while spiraling inward, it creates both a central focus area and a framing around the outside of the mountains.
@@ -145,27 +145,35 @@ GitHub Link (for README markdown formatting): https://github.com/charles-ison/sv
 3.a.)
 
 * V1
+* The extracted singularity matches the IBFV visualization as it is a focus on the IBFV visualization shows the vector field spiraling out from the singularity.
 ![image](v1_3a.png)
 
 * V3
+* The extracted singularity matches the IBFV visualization as it is a saddle and the IBFV visualization shows the vector field flowing around the singularity.
 ![image](v3_3a.png)
 
 * V4
+* The extracted singularity matches the IBFV visualization as it is a saddle and the IBFV visualization shows the vector field flowing around the singularity.
 ![image](v4_3a.png)
 
 * V5
+* The extracted singularities mostly match the IBFV visualization as there are two focuses which the IBFV visualization shows the vector field spiraling out from both. There is also a single sink, which might be right be right or wrong, but I can not clearly enough see from the IBFV visualization to tell.
 ![image](v5_3a.png)
 
 * V6
+* The extracted singularities match the IBFV visualization as there is a green saddle the IBFV visualization shows the vector field flowing around and a yellow focus the IBFV visualization shows the vector field spiraling out from.
 ![image](v6_3a.png)
 
 * V8
+* The extracted singularities match the IBFV visualization as there is a green saddle the IBFV visualization shows the vector field flowing around and a yellow focus the IBFV visualization shows the vector field spiraling out from.
 ![image](v8_3a.png)
 
 * V9
+* There are seven extracted singularities and it is hard to tell if they all match the IBFV visualization, but I suspect some might be wrong. I feel I can definitely see two saddles and two focuses in the IBFV visualization, which match four of our extracted singularities, but it is hard to tell for the other singularities without a higher resolution image and the ability to zoom in. One reason there could be incorrectly extracted singularities is we rely on an epsilon threshold for extracting the singularities which might need further tuning.
 ![image](v9_3a.png)
 
 * V10
+* There are four extracted singularities, two sources and two focuses. Much like V9, I have a hard time telling 100% if the extracted singularities match the IBFV visualization here. But, the upper source and upper focus do look visually correct to me. Where the bottom source and bottom focus are clustered, I do think there is a singularity there, but I cannot tell the type or the amount from the visualization. One reason there could be incorrectly extracted singularities is we rely on an epsilon threshold for extracting the singularities which might need further tuning.
 ![image](v10_3a.png)
 
 3.b.)
