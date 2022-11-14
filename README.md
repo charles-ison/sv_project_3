@@ -213,7 +213,7 @@ GitHub Link (for README markdown formatting): https://github.com/charles-ison/sv
 3.c.)
 
 * V1
-* No separatrices are found, so the visualization is essentionall the same as part 3.b.
+* No separatrices are found, so the visualization is essentionally the same as part 3.b.
 ![image](v1_3c.png)
 
 * V3
@@ -225,7 +225,7 @@ GitHub Link (for README markdown formatting): https://github.com/charles-ison/sv
 ![image](v4_3c.png)
 
 * V5
-* No separatrices are found, so the visualization is essentionall the same as part 3.b.
+* No separatrices are found, so the visualization is essentionally the same as part 3.b.
 ![image](v5_3c.png)
 
 * V6
@@ -241,5 +241,5 @@ GitHub Link (for README markdown formatting): https://github.com/charles-ison/sv
 ![image](v9_3c.png)
 
 * V10
-* No separatrices are found, so the visualization is essentionall the same as part 3.b.
+* No separatrices are found, so the visualization is essentionally the same as part 3.b.
 ![image](v10_3c.png)
