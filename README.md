@@ -18,12 +18,12 @@ GitHub Link (for README markdown formatting): https://github.com/charles-ison/sv
 * To run part 3.b. use the 'g' button (extracts all singularities from the vector field on top a streamline vizualization)
 * To run part 3.c. use the 'h' button (extracts all singularities and separatrices from the vector field on top of a streamline visualization)
 
-### Singularity Key
+### Singularity Color Key
 * Red is a source
-* Green is a sink
-* Blue is a saddle
-* &&& is a center
-* &&& is a focus
+* Blue is a sink
+* Green is a saddle
+* Light Blue is a center
+* Yellow is a focus
 
 ### Question Answers
 
