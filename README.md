@@ -13,7 +13,7 @@ GitHub Link (for README markdown formatting): https://github.com/charles-ison/sv
 * To run part 1.c. use the 'c' button (extracts edges from the chosen image using the Sobel filter)
 * To run part 1.d. use the 'd' button (extracts edges from the chosen image using the Sobel filter and uses the vector field)
 * To run part 2.a. use the 'e' button (extracts all singularities from the vector field, the key to match the color and type is below)
-* To run part 2.b. there are two ways to select a point, first either "shift" + "click" on a quad and a forward and backward streamline will be generated or "ctrl" + "click" on a vertex and a forward and backward streamline will be generated
+* To run part 2.b. there are two ways to select a point, first either "ctrl" + "click" on a quad's vertex and a forward and backward streamline will be generated or "shift" + "click" on a quad and a forward and backward streamline will be generated from vertex V2
 * To run part 3.a. use the 'f' button (extracts all singularities from the vector field on top of the IBFV vizualization of the same field)
 * To run part 3.b. use the 'g' button (extracts all singularities from the vector field on top a streamline vizualization)
 * To run part 3.c. use the 'h' button (extracts all singularities and separatrices from the vector field on top of a streamline visualization)
@@ -33,23 +33,17 @@ Will write some things here.
 
 * Avalanche Lake - Glacier National Park
 ![image](mountains1_part1a.png)
-
-* Driving - Grand Teton National Park
-![image](mountains2_part1a.png)
-
-* Cracker Lake - Glacier National Park
-![image](mountains3_part1a.png)
-
-1.b.)
-
-* Avalanche Lake - Glacier National Park
 ![image](mountains1_part1b.png)
 
 * Driving - Grand Teton National Park
+![image](mountains2_part1a.png)
 ![image](mountains2_part1b.png)
 
 * Cracker Lake - Glacier National Park
+![image](mountains3_part1a.png)
 ![image](mountains3_part1b.png)
+
+1.b.)
 
 1.c.)
 
