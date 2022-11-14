@@ -27,4 +27,26 @@ GitHub Link (for README markdown formatting): https://github.com/charles-ison/sv
 
 ### Question Answers
 
-1.) a.
+1.a.) 
+
+ ![image](mountains1_part1a.png)
+ ![image](mountains2_part1a.png)
+ ![image](mountains3_part1a.png)
+ 
+ 1.b.) 
+
+ ![image](mountains1_part1b.png)
+ ![image](mountains2_part1b.png)
+ ![image](mountains3_part1b.png)
+ 
+  1.c.) 
+
+ ![image](mountains1_part1c.png)
+ ![image](mountains2_part1c.png)
+ ![image](mountains3_part1c.png)
+ 
+   1.d.) 
+
+ ![image](mountains1_part1d.png)
+ ![image](mountains2_part1d.png)
+ ![image](mountains3_part1d.png)
