@@ -405,7 +405,7 @@ void classifySingularity() {
 				s.type = 3;
 				s.rgb = icVector3(0.0, 1.0, 1.0);
 			}
-			// forus
+			// focus
 			else {
 				s.type = 4;
 				s.rgb = icVector3(1.0, 1.0, 0.0);

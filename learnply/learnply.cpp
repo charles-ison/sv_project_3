@@ -95,7 +95,7 @@ Main program.
 int main(int argc, char* argv[])
 {
 	/*load mesh from ply file*/
-	FILE* this_file = fopen("../data/vector_data/v3.ply", "r");
+	FILE* this_file = fopen("../data/vector_data/v10.ply", "r");
 	poly = new Polyhedron(this_file);
 	fclose(this_file);
 	
@@ -567,14 +567,14 @@ void keyboard(unsigned char key, int x, int y) {
 	case 'a': 
 		display_mode = 5;
 		still_image = true;
-		makePatternsImg("../data/images/mountains1.ppm");
+		makePatternsImg("../data/images/mountains3.ppm");
 		glutPostRedisplay();
 		break;
 
 	case 'b':
 		display_mode = 5;
 		still_image = false;
-		makePatternsImg("../data/images/mountains1.ppm");
+		makePatternsImg("../data/images/mountains3.ppm");
 		glutPostRedisplay();
 		break;
 
@@ -602,6 +602,7 @@ void keyboard(unsigned char key, int x, int y) {
 
 	case 'f':
 		display_mode = 5;
+		still_image = false;
 		initIBFV();
 		extractSingularity();
 		classifySingularity();
@@ -614,7 +615,7 @@ void keyboard(unsigned char key, int x, int y) {
 			Polyline2 polyline;
 			for (int i = -10; i < 10; i++) {
 				polyline.vertices.clear();
-				streamline(polyline, icVector3(i * 1.0, 0, 0), 0.005);
+				streamline(polyline, icVector3(i * 1.0, 0, 0), 0.002);
 				polyline.rgb = icVector3(0.0, 1.0, 0.0);
 				polylines.push_back(polyline);
 			}
@@ -630,7 +631,7 @@ void keyboard(unsigned char key, int x, int y) {
 			Polyline2 polyline;
 			for (int i = -10; i < 10; i++) {
 				polyline.vertices.clear();
-				streamline(polyline, icVector3(i * 1.0, 0, 0), 0.005);
+				streamline(polyline, icVector3(i * 1.0, 0, 0), 0.002);
 				polyline.rgb = icVector3(0.0, 1.0, 0.0);
 				polylines.push_back(polyline);
 			}
